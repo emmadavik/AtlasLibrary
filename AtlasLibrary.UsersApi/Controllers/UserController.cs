@@ -24,7 +24,6 @@ public class UsersController : ControllerBase
     // READ (R i CRUD)
     // =========================
 
-    // ADMIN: Se alla användare
     [HttpGet]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetAll()
@@ -36,7 +35,6 @@ public class UsersController : ControllerBase
         return Ok(users);
     }
 
-    // ADMIN: Hämta valfri användare via id
     [HttpGet("{id}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Get(int id)
@@ -47,7 +45,6 @@ public class UsersController : ControllerBase
         return Ok(new { user.Id, user.Namn, user.Epost, user.Roll });
     }
 
-    // USER/ADMIN: Hämta sin egen profil
     [HttpGet("me")]
     [Authorize]
     public async Task<IActionResult> GetMe()
@@ -65,12 +62,31 @@ public class UsersController : ControllerBase
     // CREATE (C i CRUD)
     // =========================
 
-    // REGISTRERING: Öppen, men alla blir alltid "User"
-    [HttpPost]
+    // Vanlig registrering: alla blir alltid User
+    [HttpPost("register")]
     [AllowAnonymous]
-    public async Task<IActionResult> Create(Anvandare user)
+    public async Task<IActionResult> Register(Anvandare user)
     {
         user.Roll = "User";
+        user.Losenord = _hasher.HashPassword(user, user.Losenord);
+
+        _db.Anvandare.Add(user);
+        await _db.SaveChangesAsync();
+
+        return Created($"/api/users/{user.Id}",
+            new { user.Id, user.Namn, user.Epost, user.Roll });
+    }
+
+    // Admin kan skapa både User och Admin
+    [HttpPost]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> Create(Anvandare user)
+    {
+        if (string.IsNullOrWhiteSpace(user.Roll))
+        {
+            user.Roll = "User";
+        }
+
         user.Losenord = _hasher.HashPassword(user, user.Losenord);
 
         _db.Anvandare.Add(user);
@@ -84,7 +100,6 @@ public class UsersController : ControllerBase
     // UPDATE (U i CRUD)
     // =========================
 
-    // ADMIN: Uppdatera valfri användare via id (men inte roll här – vi håller det enkelt)
     [HttpPut("{id}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Update(int id, Anvandare updated)
@@ -94,15 +109,17 @@ public class UsersController : ControllerBase
 
         existing.Namn = updated.Namn;
         existing.Epost = updated.Epost;
+        existing.Roll = updated.Roll;
 
         if (!string.IsNullOrWhiteSpace(updated.Losenord))
+        {
             existing.Losenord = _hasher.HashPassword(existing, updated.Losenord);
+        }
 
         await _db.SaveChangesAsync();
         return NoContent();
     }
 
-    // USER/ADMIN: Uppdatera sin egen profil
     [HttpPut("me")]
     [Authorize]
     public async Task<IActionResult> UpdateMe(Anvandare updated)
@@ -117,9 +134,10 @@ public class UsersController : ControllerBase
         existing.Epost = updated.Epost;
 
         if (!string.IsNullOrWhiteSpace(updated.Losenord))
+        {
             existing.Losenord = _hasher.HashPassword(existing, updated.Losenord);
+        }
 
-        // OBS: Roll ändras inte här
         await _db.SaveChangesAsync();
         return NoContent();
     }
@@ -128,7 +146,6 @@ public class UsersController : ControllerBase
     // DELETE (D i CRUD)
     // =========================
 
-    // ADMIN: Ta bort valfri användare
     [HttpDelete("{id}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Delete(int id)

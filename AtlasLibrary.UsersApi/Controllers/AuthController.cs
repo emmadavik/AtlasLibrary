@@ -25,6 +25,7 @@ public class AuthController : ControllerBase
     }
 
     public record LoginRequest(string Epost, string Losenord);
+    public record RegisterRequest(string Namn, string Epost, string Losenord);
 
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginRequest req)
@@ -54,6 +55,40 @@ public class AuthController : ControllerBase
         {
             token = new JwtSecurityTokenHandler().WriteToken(token),
             roll = user.Roll
+        });
+    }
+
+    [HttpPost("register")]
+    public async Task<IActionResult> Register(RegisterRequest req)
+    {
+        if (string.IsNullOrWhiteSpace(req.Namn) ||
+            string.IsNullOrWhiteSpace(req.Epost) ||
+            string.IsNullOrWhiteSpace(req.Losenord))
+        {
+            return BadRequest("Alla fält måste fyllas i.");
+        }
+
+        var finnsRedan = await _db.Anvandare.AnyAsync(u => u.Epost == req.Epost);
+        if (finnsRedan)
+        {
+            return BadRequest("E-postadressen används redan.");
+        }
+
+        var user = new Anvandare
+        {
+            Namn = req.Namn,
+            Epost = req.Epost,
+            Roll = "User"
+        };
+
+        user.Losenord = _hasher.HashPassword(user, req.Losenord);
+
+        _db.Anvandare.Add(user);
+        await _db.SaveChangesAsync();
+
+        return Ok(new
+        {
+            message = "Konto skapat"
         });
     }
 }

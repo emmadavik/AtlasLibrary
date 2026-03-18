@@ -1,0 +1,42 @@
+﻿@{
+    ViewData["Title"] = "Logga in";
+}
+
+<div class="login-page">
+    <div class="login-card">
+        <div class="login-content">
+            <h1>Logga in</h1>
+            <p>Logga in för att komma åt din profil och bibliotekets funktioner.</p>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="login-error">
+                    @ViewBag.Error
+                </div>
+            }
+
+            <form method="post" asp-controller="Account" asp-action="Login" class="login-form">
+                <div class="form-group-custom">
+                    <label for="epost">E-post</label>
+                    <input type="text" id="epost" name="epost" class="login-input" required />
+                </div>
+
+                <div class="form-group-custom">
+                    <label for="losenord">Lösenord</label>
+                    <input type="password" id="losenord" name="losenord" class="login-input" required />
+                </div>
+
+                <button type="submit" class="login-submit-btn">Logga in</button>
+            </form>
+
+            <!-- 🔥 NY DEL -->
+            <div class="mt-4 text-center">
+                <p>Har du inget konto?</p>
+                <a class="btn btn-outline-primary" asp-controller="Account" asp-action="Register">
+                    Skapa konto
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>

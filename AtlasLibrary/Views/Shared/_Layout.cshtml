@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var token = Context.Session.GetString("JwtToken");
+    var role = Context.Session.GetString("UserRole");
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -36,13 +41,21 @@
                     </ul>
 
                     <div class="d-flex gap-2">
-                        <a class="btn btn-light profile-btn" href="#">Profile</a>
-                        <a class="btn login-btn" href="#">Log In</a>
+                        @if (string.IsNullOrEmpty(token))
+                        {
+                            <a class="btn login-btn" asp-controller="Account" asp-action="Login">Logga in</a>
+                        }
+                        else
+                        {
+                            <a class="btn btn-light profile-btn" asp-controller="Profile" asp-action="Index">Profil</a>
+                            <a class="btn login-btn" asp-controller="Account" asp-action="Logout">Logga ut</a>
+                        }
                     </div>
                 </div>
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -54,6 +67,7 @@
             &copy; 2026 - AtlasLibrary - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
