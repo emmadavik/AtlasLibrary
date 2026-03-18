@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Kundkorg";
+}
+
+<div class="container mt-5">
+    <h1 class="mb-4">Kundkorg</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ItemId</th>
+                <th>Titel</th>
+                <th>Antal</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>Testbok</td>
+                <td>1</td>
+                <td>
+                    <a asp-controller="LoansPage"
+                       asp-action="Create"
+                       asp-route-itemId="1"
+                       class="btn btn-success">
+                        Gå vidare till lån
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
