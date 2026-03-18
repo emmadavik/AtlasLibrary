@@ -1,0 +1,52 @@
+﻿@model IEnumerable<AtlasLibrary.Models.LoanViewModel>
+
+@{
+    ViewData["Title"] = "Mina lån";
+}
+
+<div class="container mt-5">
+
+    <h1 class="mb-4">Mina lån</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Antal</th>
+                <th>Lånedatum</th>
+                <th>Förfallodatum</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            @foreach (var loan in Model)
+            {
+                <tr>
+                    @* <td>@loan.ItemId</td> *@
+                    <td>@loan.ItemTitle</td>
+                    <td>@loan.Quantity</td>
+                    <td>@loan.LoanDate.ToShortDateString()</td>
+                    <td>@loan.DueDate.ToShortDateString()</td>
+                    <td>
+                        @if (loan.Status == "Returned")
+                        {
+                            <span class="badge bg-success">Returned</span>
+                        }
+                        else if (loan.Status == "Pending")
+                        {
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">@loan.Status</span>
+                        }
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+
+</div>

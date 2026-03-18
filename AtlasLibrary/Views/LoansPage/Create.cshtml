@@ -1,0 +1,59 @@
+﻿@model AtlasLibrary.Models.CreateLoanViewModel
+
+@{
+    ViewData["Title"] = "Skapa lån";
+}
+
+<div class="container mt-5">
+    <h1 class="mb-4">Bekräfta lån</h1>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <form asp-action="Create" method="post" class="w-50">
+        <input asp-for="ItemId" type="hidden" />
+        <input asp-for="UserId" type="hidden" />
+        <input asp-for="ItemTitle" type="hidden" />
+        <input asp-for="UserName" type="hidden" />
+
+        <div class="mb-3">
+            <label class="form-label">Vald bok</label>
+            <input value="@Model.ItemTitle" class="form-control" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Låntagare</label>
+            <input value="@Model.UserName" class="form-control" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Quantity" class="form-label"></label>
+            <input asp-for="Quantity" class="form-control" />
+            <span asp-validation-for="Quantity" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="LoanDate" class="form-label"></label>
+            <input asp-for="LoanDate" type="date" class="form-control" />
+            <span asp-validation-for="LoanDate" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="DueDate" class="form-label"></label>
+            <input asp-for="DueDate" type="date" class="form-control" />
+            <span asp-validation-for="DueDate" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-success">Bekräfta lån</button>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
