@@ -1,0 +1,36 @@
+﻿@model List<AtlasLibrary.Models.Item>
+
+<h1>Administrera objekt</h1>
+
+<a asp-action="Create">Lägg till nytt objekt</a>
+
+<table>
+    <thead>
+    <tr>
+        <th>Titel</th>
+        <th>Författare</th>
+        <th>Typ</th>
+        <th>Antal</th>
+        <th>Tillgänglig</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Title</td>
+            <td>@item.Author</td>
+            <td>@item.Type</td>
+            <td>@item.Model</td>
+            <td>@item.Quantity</td>
+            <td>@item.IsAvailable</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Redigera</a>
+                <form asp-action="Delete" asp-route-id="@item.Id" method="post">
+                    <button type="submit">Ta bort</button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

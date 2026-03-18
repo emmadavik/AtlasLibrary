@@ -1,0 +1,43 @@
+﻿@model AtlasLibrary.Models.Item
+
+<h1>Lägg till nytt objekt</h1>
+
+<form asp-action="Create" method="post">
+    <div>
+        <label>Titel</label>
+        <input asp-for="Title" />
+    </div>
+    <div>
+        <label>Författare</label>
+        <input asp-for="Author" />
+    </div>
+    <div>
+        <label>Typ</label>
+        <select asp-for="Type">
+            <option value="Bok">Bok</option>
+            <option value="Utrustning">Utrustning</option>
+        </select>
+    </div>
+    <div>
+        <label>Modell</label>
+        <input asp-for="Model" />
+    </div>
+    <div>
+        <label>Antal</label>
+        <input asp-for="Quantity" type="number" />
+    </div>
+    <div>
+        <label>Beskrivning</label>
+        <input asp-for="Description" />
+    </div>
+    <div>
+        <label>Tillgänglig</label>
+        <input asp-for="IsAvailable" type="checkbox" />
+    </div>
+    <div>
+        <label>Bild-URL</label>
+        <input asp-for="ImageUrl" />
+    </div>
+    <button type="submit">Spara</button>
+    <a asp-action="Index">Avbryt</a>
+</form>

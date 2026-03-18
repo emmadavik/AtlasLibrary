@@ -5,6 +5,8 @@ VisualStudioVersion = 17.14.36616.10 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtlasLibrary", "AtlasLibrary\AtlasLibrary.csproj", "{5ABEC9F5-B47C-47DF-B595-23973A06D05F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ItemsAPI", "ItemsAPI\ItemsAPI.csproj", "{72085009-80D7-4F71-9586-D38BB4038B4D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{5ABEC9F5-B47C-47DF-B595-23973A06D05F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5ABEC9F5-B47C-47DF-B595-23973A06D05F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5ABEC9F5-B47C-47DF-B595-23973A06D05F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72085009-80D7-4F71-9586-D38BB4038B4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72085009-80D7-4F71-9586-D38BB4038B4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72085009-80D7-4F71-9586-D38BB4038B4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72085009-80D7-4F71-9586-D38BB4038B4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
