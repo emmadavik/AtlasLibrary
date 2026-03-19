@@ -367,3 +367,96 @@ footer,
         background-color: #6f2323;
         color: white;
     }
+
+/* Profil + lån sida */
+.profile-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 40px 80px 40px;
+}
+
+.profile-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 28px;
+    align-items: start;
+}
+
+.profile-panel {
+    background-color: #efefed;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.loans-panel {
+    min-width: 0;
+}
+
+.loans-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 12px;
+}
+
+.loans-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: transparent;
+}
+
+    .loans-table thead th {
+        text-align: left;
+        padding: 16px 14px;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1f1f1f;
+        border-bottom: 1px solid #d7d7d2;
+        white-space: nowrap;
+    }
+
+    .loans-table tbody td {
+        padding: 16px 14px;
+        font-size: 1rem;
+        color: #1f1f1f;
+        border-bottom: 1px solid #d7d7d2;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+.loan-status-badge {
+    display: inline-block;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+    .loan-status-badge.returned {
+        background-color: #234f39;
+        color: white;
+    }
+
+    .loan-status-badge.pending {
+        background-color: #e7c24a;
+        color: #1f1f1f;
+    }
+
+.empty-loans {
+    background-color: #f8f8f8;
+    border: 1px solid #d8d8d8;
+    border-radius: 10px;
+    padding: 16px 18px;
+    color: #555;
+    margin-top: 12px;
+}
+
+@media (max-width: 992px) {
+    .profile-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-panel {
+        padding: 32px;
+    }
+}
