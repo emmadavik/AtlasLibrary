@@ -1,8 +1,27 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Hem";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="home-page">
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1>Låna böcker och utrustning</h1>
+            <p>
+                Kolla bland alla våra alternativ av böcker och utrustning.
+                Hitta det du behöver och hantera dina lån enkelt.
+            </p>
+            <a asp-controller="Items" asp-action="Index" class="primary-btn">Klicka här</a>
+        </div>
+    </section>
+
+    <section class="news-section">
+        <div class="news-content">
+            <h2>Våra nyheter på böcker</h2>
+            <p>
+                Ta del av nya titlar, uppdateringar och information om
+                tillgängliga resurser i biblioteket.
+            </p>
+            <a asp-controller="Home" asp-action="Privacy" class="primary-btn">Klicka här</a>
+        </div>
+    </section>
 </div>
