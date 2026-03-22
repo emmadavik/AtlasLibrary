@@ -46,7 +46,7 @@ public class ItemsController : Controller
 
        return View(items);
    }
-   [HttpPost]
+   
    [HttpPost]
    public async Task<IActionResult> AddToCart(
        int itemId,
