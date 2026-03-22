@@ -1,0 +1,123 @@
+@if (TempData["Success"] != null)
+{
+   <p style="color: green;">@TempData["Success"]</p>
+}
+
+
+@if (TempData["Error"] != null)
+{
+   <p style="color: red;">@TempData["Error"]</p>
+}
+
+
+@model List<AtlasLibrary.Models.ItemViewModel>
+
+
+@{
+   ViewData["Title"] = "Items";
+   var currentCategory = ViewBag.Category as string ?? "books";
+   var currentQuery = ViewBag.Query as string ?? "";
+}
+
+
+<link rel="stylesheet" href="~/css/Items.css" asp-append-version="true" />
+<div class="items-page">
+   <h1>Items</h1>
+
+
+   <div class="filters">
+       <a href="@Url.Action("Index", new { category = "books" })"
+          class="filter-btn @(currentCategory == "books" ? "active" : "")">
+           Böcker
+       </a>
+
+
+       <a href="@Url.Action("Index", new { category = "equipment" })"
+          class="filter-btn @(currentCategory == "equipment" ? "active" : "")">
+           Utrustning
+       </a>
+
+
+       <a href="@Url.Action("Index", new { category = "reports" })"
+          class="filter-btn @(currentCategory == "reports" ? "active" : "")">
+           Rapporter
+       </a>
+   </div>
+
+
+   <form method="get" class="search-form">
+       <input type="hidden" name="category" value="@currentCategory" />
+       <input type="text" name="q" value="@currentQuery" placeholder="Sök..." />
+       <button type="submit">Sök</button>
+   </form>
+
+
+   @if (!Model.Any())
+   {
+       <p>Inga objekt hittades.</p>
+   }
+   else
+   {
+       <div class="items-grid">
+           @foreach (var item in Model)
+           {
+               <div class="item-card">
+
+
+                   @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                   {
+                       <img src="@item.ImageUrl" alt="@item.Title" class="item-image" />
+                   }
+                   else
+                   {
+                       <div class="no-image">Ingen bild</div>
+                   }
+
+
+                   <h3>@item.Title</h3>
+
+
+                   @if (!string.IsNullOrWhiteSpace(item.Author))
+                   {
+                       <p class="item-author">@item.Author</p>
+                   }
+
+
+                   @if (!string.IsNullOrWhiteSpace(item.Type))
+                   {
+                       <p class="item-type">@item.Type</p>
+                   }
+
+
+                   @if (!string.IsNullOrWhiteSpace(item.Description))
+                   {
+                       <p class="item-description">@item.Description</p>
+                   }
+
+
+                   <p class="item-status">
+                       @(item.IsAvailable ? "Tillgänglig" : "Utlånad")
+                   </p>
+
+
+                   <form asp-action="AddToCart" method="post">
+                       <input type="hidden" name="itemId" value="@item.Id" />
+                       <input type="hidden" name="title" value="@item.Title" />
+                       <input type="hidden" name="author" value="@item.Author" />
+                       <input type="hidden" name="type" value="@item.Type" />
+                       <input type="hidden" name="description" value="@item.Description" />
+                       <input type="hidden" name="imageUrl" value="@item.ImageUrl" />
+                       <input type="hidden" name="category" value="@currentCategory" />
+                       <input type="hidden" name="q" value="@currentQuery" />
+
+
+                       <button type="submit" class="cart-btn">
+                           Lägg i kundvagn
+                       </button>
+                   </form>
+               </div>
+           }
+       </div>
+   }
+</div>
+
