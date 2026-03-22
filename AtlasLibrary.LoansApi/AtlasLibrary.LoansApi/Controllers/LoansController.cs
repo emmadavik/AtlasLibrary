@@ -24,7 +24,7 @@ namespace AtlasLibrary.LoansApi.Controllers
         {
             return await _context.Loans.ToListAsync();
         }
-
+        
         [HttpGet("{id}")]
         public async Task<ActionResult<Loan>> GetLoan(int id)
         {
