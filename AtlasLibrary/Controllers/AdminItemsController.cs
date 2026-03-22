@@ -7,7 +7,7 @@ namespace AtlasLibrary.Controllers;
 public class AdminItemsController : Controller
 {
     private readonly HttpClient _httpClient;
-    private readonly string _apiUrl = "http://localhost:5070/api/items";
+    private readonly string _apiUrl = "https://atlaslibraryitemsobject-gddwfucvfuetbmbe.swedencentral-01.azurewebsites.net/api/items";
 
     public AdminItemsController(IHttpClientFactory httpClientFactory)
     {
@@ -27,7 +27,7 @@ public class AdminItemsController : Controller
     {
         return View();
     }
-
+    
     [HttpPost]
     public async Task<IActionResult> Create(Item item)
     {

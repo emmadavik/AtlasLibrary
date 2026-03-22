@@ -32,6 +32,15 @@ public class ItemsController : ControllerBase
     [HttpPost]
     public IActionResult Create(Item item)
     {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState
+                .Where(x => x.Value.Errors.Count > 0)
+                .Select(x => new { x.Key, x.Value.Errors })
+                .ToList();
+            return BadRequest(errors);
+        }
+
         _context.Items.Add(item);
         _context.SaveChanges();
         return Ok(item);
