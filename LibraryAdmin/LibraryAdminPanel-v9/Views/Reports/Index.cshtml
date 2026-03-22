@@ -1,0 +1,52 @@
+@model List<LibraryAdminPanel.Models.Report>
+@{
+    ViewData["Title"] = "Rapporter";
+}
+
+<div class="page-header-row">
+    <div>
+        <h1>Rapporter</h1>
+        <p class="sub-text">Här ser du alla skapade rapporter.</p>
+    </div>
+    <a class="btn-primary" asp-action="Create">Skapa ny rapport</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-card">
+        <p>Inga rapporter finns ännu.</p>
+    </div>
+}
+else
+{
+    <div class="table-card">
+        <table class="simple-table">
+            <thead>
+            <tr>
+                <th>Rapportnamn</th>
+                <th>Antal objekt</th>
+                <th>Valda objekt</th>
+                <th>Datum</th>
+                <th>Åtgärder</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var report in Model)
+            {
+                <tr>
+                    <td>@report.Title</td>
+                    <td>@report.ObjectCount</td>
+                    <td>
+                        @string.Join(", ", report.SelectedObjects.Select(x => x.Title))
+                    </td>
+                    <td>@report.CreatedAt.ToString("yyyy-MM-dd")</td>
+                    <td class="action-cell">
+                        <a class="text-link" asp-action="Edit" asp-route-id="@report.Id">Ändra</a>
+                        <a class="text-link delete-link" asp-action="Delete" asp-route-id="@report.Id">Ta bort</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
