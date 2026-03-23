@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtlasLibrary.UsersApi", "At
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtlasLibrary.LoansApi", "AtlasLibrary.LoansApi\AtlasLibrary.LoansApi\AtlasLibrary.LoansApi.csproj", "{DB5A42E1-DCDF-D37D-A6D6-40D8991CEF1A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "items", "items\items.csproj", "{F1D48015-EB73-D49E-E4B8-FBD782CDA327}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{DB5A42E1-DCDF-D37D-A6D6-40D8991CEF1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB5A42E1-DCDF-D37D-A6D6-40D8991CEF1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB5A42E1-DCDF-D37D-A6D6-40D8991CEF1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1D48015-EB73-D49E-E4B8-FBD782CDA327}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1D48015-EB73-D49E-E4B8-FBD782CDA327}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1D48015-EB73-D49E-E4B8-FBD782CDA327}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1D48015-EB73-D49E-E4B8-FBD782CDA327}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

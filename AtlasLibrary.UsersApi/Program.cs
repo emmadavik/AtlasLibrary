@@ -18,6 +18,17 @@ builder.Services.AddDbContext<UsersDbContext>(options =>
 // Controllers
 builder.Services.AddControllers();
 
+// CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("ReactPolicy", policy =>
+    {
+        policy.WithOrigins("http://localhost:5175")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -85,6 +96,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// CORS måste ligga före auth
+app.UseCors("ReactPolicy");
 
 // Viktig ordning
 app.UseAuthentication();

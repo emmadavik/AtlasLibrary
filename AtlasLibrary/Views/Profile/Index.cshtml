@@ -54,7 +54,7 @@
         <div class="profile-panel loans-panel">
             <div class="login-content">
                 <h1>Mina lån</h1>
-                <p>Här ser du dina aktuella och tidigare lån.</p>
+                <p>Här ser du dina lån.</p>
 
                 @if (Model.Loans != null && Model.Loans.Any())
                 {
@@ -62,7 +62,6 @@
                         <table class="loans-table">
                             <thead>
                                 <tr>
-                                    <th>Lån-ID</th>
                                     <th>Item-ID</th>
                                     <th>Antal</th>
                                     <th>Lånedatum</th>
@@ -74,7 +73,6 @@
                                 @foreach (var loan in Model.Loans)
                                 {
                                     <tr>
-                                        <td>@loan.Id</td>
                                         <td>@loan.ItemId</td>
                                         <td>@loan.Quantity</td>
                                         <td>@loan.LoanDate.ToString("yyyy-MM-dd")</td>
