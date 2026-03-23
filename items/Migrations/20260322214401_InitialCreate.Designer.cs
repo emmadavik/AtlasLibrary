@@ -10,8 +10,8 @@ using items.Data;
 namespace items.Migrations
 {
     [DbContext(typeof(ItemsDbContext))]
-    [Migration("20260317231231_AddDescriptionToCartItem")]
-    partial class AddDescriptionToCartItem
+    [Migration("20260322214401_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

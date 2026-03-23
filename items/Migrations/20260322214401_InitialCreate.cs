@@ -5,17 +5,29 @@
 namespace items.Migrations
 {
     /// <inheritdoc />
-    public partial class AddCartItems : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<string>(
-                name: "Author",
-                table: "CartItems",
-                type: "TEXT",
-                nullable: false,
-                defaultValue: "");
+            migrationBuilder.CreateTable(
+                name: "CartItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    ItemId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Title = table.Column<string>(type: "TEXT", nullable: false),
+                    Author = table.Column<string>(type: "TEXT", nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: false),
+                    Type = table.Column<string>(type: "TEXT", nullable: false),
+                    ImageUrl = table.Column<string>(type: "TEXT", nullable: false),
+                    Quantity = table.Column<int>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CartItems", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "Items",
@@ -25,8 +37,8 @@ namespace items.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Title = table.Column<string>(type: "TEXT", nullable: false),
                     Author = table.Column<string>(type: "TEXT", nullable: false),
-                    Type = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: false),
+                    Type = table.Column<string>(type: "TEXT", nullable: false),
                     IsAvailable = table.Column<bool>(type: "INTEGER", nullable: false),
                     ImageUrl = table.Column<string>(type: "TEXT", nullable: false)
                 },
@@ -40,11 +52,10 @@ namespace items.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Items");
+                name: "CartItems");
 
-            migrationBuilder.DropColumn(
-                name: "Author",
-                table: "CartItems");
+            migrationBuilder.DropTable(
+                name: "Items");
         }
     }
 }
