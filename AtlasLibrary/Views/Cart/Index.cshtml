@@ -1,27 +1,93 @@
-@{
-    ViewData["Title"] = "Hem";
-}
+@model List<AtlasLibrary.Models.CartItemViewModel>
+<link rel="stylesheet" href="~/css/Cart.css" asp-append-version="true" />
 
-<div class="home-page">
-    <section class="hero-section">
-        <div class="hero-content">
-            <h1>Låna böcker och utrustning</h1>
-            <p>
-                Kolla bland alla våra alternativ av böcker och utrustning.
-                Hitta det du behöver och hantera dina lån enkelt.
-            </p>
-            <a asp-controller="Items" asp-action="Index" class="primary-btn">Klicka här</a>
-        </div>
-    </section>
 
-    <section class="news-section">
-        <div class="news-content">
-            <h2>Våra nyheter på böcker</h2>
-            <p>
-                Ta del av nya titlar, uppdateringar och information om
-                tillgängliga resurser i biblioteket.
-            </p>
-            <a asp-controller="Home" asp-action="Privacy" class="primary-btn">Klicka här</a>
-        </div>
-    </section>
+
+
+<div class="cart-overlay">
+   <div class="cart-drawer">
+       <div class="cart-header">
+           <h2>Varukorg</h2>
+           <a asp-controller="Items" asp-action="Index" class="close-btn">×</a>
+       </div>
+
+
+       <div class="cart-body">
+           @if (!Model.Any())
+           {
+               <p>Din kundvagn är tom.</p>
+           }
+           else
+           {
+               @foreach (var item in Model)
+               {
+                   <div class="cart-row">
+                       <div class="cart-row-image">
+                           @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                           {
+                               <img src="@item.ImageUrl" alt="@item.Title" />
+                           }
+                           else
+                           {
+                               <div class="cart-no-image">Ingen bild</div>
+                           }
+                       </div>
+                       
+                       <div class="cart-row-info">
+                           <h4>@item.Title</h4>
+
+                           @if (!string.IsNullOrWhiteSpace(item.Author))
+                           {
+                               <p><strong>Författare:</strong> @item.Author</p>
+                           }
+
+                           @if (!string.IsNullOrWhiteSpace(item.Description))
+                           {
+                               <p><strong>Beskrivning:</strong> @item.Description</p>
+                           }
+
+                           <p><strong>Typ:</strong> @item.Type</p>
+                           
+                       </div>
+                      
+
+
+                       <div class="cart-row-actions">
+                           <div class="qty-box">
+                               <form asp-action="DecreaseQuantity" method="post">
+                                   <input type="hidden" name="id" value="@item.Id" />
+                                   <button type="submit">−</button>
+                               </form>
+
+
+                               <span>@item.Quantity</span>
+
+
+                               <form asp-action="IncreaseQuantity" method="post">
+                                   <input type="hidden" name="id" value="@item.Id" />
+                                   <button type="submit">+</button>
+                               </form>
+                           </div>
+
+                           <form asp-action="Remove" method="post">
+                               <input type="hidden" name="id" value="@item.Id" />
+                               <button type="submit" class="remove-link">Ta bort</button>
+                           </form>
+                       </div>
+                   </div>
+               }
+           }
+       </div>
+
+
+       <div class="cart-footer">
+           <div class="cart-summary">
+               <span>Summa</span>
+               <strong>@Model.Sum(x => x.Quantity) objekt</strong>
+           </div>
+           
+           <a href="#" class="checkout-btn">Fortsätt</a>
+       </div>
+   </div>
 </div>
+

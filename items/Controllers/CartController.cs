@@ -31,21 +31,29 @@ public class CartController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<CartItem>> AddToCart(CartItem item)
     {
+        if (item.Quantity <= 0)
+        {
+            item.Quantity = 1;
+        }
+
         var existing = await _context.CartItems
             .FirstOrDefaultAsync(c => c.ItemId == item.ItemId);
-
 
         if (existing != null)
         {
             existing.Quantity += item.Quantity;
+            existing.Title = item.Title;
+            existing.Author = item.Author;
+            existing.Description = item.Description;
+            existing.Type = item.Type;
+            existing.ImageUrl = item.ImageUrl;
+
             await _context.SaveChangesAsync();
             return Ok(existing);
         }
 
-
         _context.CartItems.Add(item);
         await _context.SaveChangesAsync();
-
 
         return Ok(item);
     }
