@@ -1,6 +1,6 @@
-namespace items.Models;
+namespace AtlasLibrary.Models;
 
-public class Item
+public class ItemViewModel
 {
     public int Id { get; set; }
     public string Title { get; set; } = string.Empty;
