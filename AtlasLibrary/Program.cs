@@ -11,10 +11,6 @@ builder.Services.AddHttpClient("itemsApi", client =>
 });
 
 
-
-
-
-
 var app = builder.Build();
 
 
