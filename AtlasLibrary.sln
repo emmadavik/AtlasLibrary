@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AtlasLibrary", "AtlasLibrar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ItemsAPI", "ItemsAPI\ItemsAPI.csproj", "{72085009-80D7-4F71-9586-D38BB4038B4D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibraryAdminPanel", "AdminPanel\LibraryAdminPanel.csproj", "{FBE37124-8CC4-400A-8EC5-3A734588FF10}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{72085009-80D7-4F71-9586-D38BB4038B4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72085009-80D7-4F71-9586-D38BB4038B4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72085009-80D7-4F71-9586-D38BB4038B4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBE37124-8CC4-400A-8EC5-3A734588FF10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBE37124-8CC4-400A-8EC5-3A734588FF10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBE37124-8CC4-400A-8EC5-3A734588FF10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBE37124-8CC4-400A-8EC5-3A734588FF10}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
