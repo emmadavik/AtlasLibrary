@@ -1,0 +1,54 @@
+﻿@model AtlasLibrary.Controllers.AdminController.AdminUserCreateViewModel
+
+@{
+    ViewData["Title"] = "Lägg till användare";
+}
+
+<div class="login-page">
+    <div class="login-card">
+        <div class="login-content">
+            <h1>Lägg till användare</h1>
+            <p>Här kan administratören skapa en ny användare.</p>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="login-error">
+                    @ViewBag.Error
+                </div>
+            }
+
+            <form method="post" asp-controller="Admin" asp-action="Create" class="login-form">
+                <div class="form-group-custom">
+                    <label for="Namn">Användarnamn</label>
+                    <input type="text" id="Namn" name="Namn" class="login-input" required />
+                </div>
+
+                <div class="form-group-custom">
+                    <label for="Epost">E-post</label>
+                    <input type="text" id="Epost" name="Epost" class="login-input" required />
+                </div>
+
+                <div class="form-group-custom">
+                    <label for="Losenord">Lösenord</label>
+                    <input type="password" id="Losenord" name="Losenord" class="login-input" required />
+                </div>
+
+                <div class="form-group-custom">
+                    <label for="Roll">Roll</label>
+                    <select id="Roll" name="Roll" class="login-input" required>
+                        <option value="User">User</option>
+                        <option value="Admin">Admin</option>
+                    </select>
+                </div>
+
+                <div class="profile-actions">
+                    <button type="submit" class="login-submit-btn">Skapa användare</button>
+
+                    <a asp-controller="Admin" asp-action="Index" class="profile-btn text-decoration-none">
+                        Tillbaka
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
