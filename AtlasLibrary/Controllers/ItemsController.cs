@@ -51,10 +51,10 @@ public class ItemsController : Controller
    public async Task<IActionResult> AddToCart(
        int itemId,
        string title,
-       string author,
+       string? author,
        string type,
        string? description,
-       string imageUrl,
+       string? imageUrl,
        string category = "books",
        string? q = null)
    {
@@ -62,21 +62,14 @@ public class ItemsController : Controller
        {
            itemId,
            title,
-           author,
+           author = author ?? "",
            type,
            description = description ?? "",
-           imageUrl,
+           imageUrl = imageUrl ?? "",
            quantity = 1
        };
 
-
        var response = await _httpClient.PostAsJsonAsync("api/Cart", payload);
-
-
-       var responseBody = await response.Content.ReadAsStringAsync();
-       Console.WriteLine($"Cart API status: {(int)response.StatusCode}");
-       Console.WriteLine($"Cart API response: {responseBody}");
-
 
        if (!response.IsSuccessStatusCode)
        {
@@ -86,7 +79,6 @@ public class ItemsController : Controller
        {
            TempData["Success"] = "Objektet lades till i kundvagnen.";
        }
-
 
        return RedirectToAction("Index", new { category, q });
    }

@@ -36,11 +36,13 @@
                        <div class="cart-row-info">
                            <h4>@item.Title</h4>
 
-                           @if (!string.IsNullOrWhiteSpace(item.Author))
+                           @if (item.Type == "Book" || item.Type == "Bok")
                            {
-                               <p><strong>Författare:</strong> @item.Author</p>
+                               if (!string.IsNullOrWhiteSpace(item.Author))
+                               {
+                                   <p><strong>Författare:</strong> @item.Author</p>
+                               }
                            }
-
                            @if (!string.IsNullOrWhiteSpace(item.Description))
                            {
                                <p><strong>Beskrivning:</strong> @item.Description</p>
