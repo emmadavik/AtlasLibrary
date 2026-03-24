@@ -16,8 +16,8 @@ public class ExternalObjectApiService
 
     public async Task<List<CompletedObject>> GetCompletedObjectsAsync()
     {
-        var baseUrl = _configuration["ExternalObjectsApi:BaseUrl"] ?? string.Empty;
-        var endpoint = _configuration["ExternalObjectsApi:CompletedObjectsEndpoint"] ?? string.Empty;
+        var baseUrl = _configuration["ExternalObjectsApi:BaseUrl"];
+        var endpoint = _configuration["ExternalObjectsApi:CompletedObjectsEndpoint"];
 
         if (string.IsNullOrWhiteSpace(baseUrl) || string.IsNullOrWhiteSpace(endpoint))
         {
@@ -29,7 +29,14 @@ public class ExternalObjectApiService
             var client = _httpClientFactory.CreateClient();
             client.BaseAddress = new Uri(baseUrl);
 
-            var result = await client.GetFromJsonAsync<List<CompletedObject>>(endpoint);
+            var response = await client.GetAsync(endpoint);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return new List<CompletedObject>();
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<List<CompletedObject>>();
             return result ?? new List<CompletedObject>();
         }
         catch
