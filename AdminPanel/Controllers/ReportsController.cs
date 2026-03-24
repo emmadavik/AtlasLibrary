@@ -43,7 +43,7 @@ public class ReportsController : Controller
     {
         viewModel.CompletedObjects = await _externalObjectApiService.GetCompletedObjectsAsync();
 
-        if (!viewModel.SelectedObjectIds.Any())
+        if (viewModel.SelectedObjectIds == null || !viewModel.SelectedObjectIds.Any())
         {
             ModelState.AddModelError(string.Empty, "Välj minst ett objekt till rapporten.");
         }
@@ -104,7 +104,7 @@ public class ReportsController : Controller
     {
         viewModel.CompletedObjects = await _externalObjectApiService.GetCompletedObjectsAsync();
 
-        if (!viewModel.SelectedObjectIds.Any())
+        if (viewModel.SelectedObjectIds == null || !viewModel.SelectedObjectIds.Any())
         {
             ModelState.AddModelError(string.Empty, "Välj minst ett objekt till rapporten.");
         }
