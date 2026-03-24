@@ -7,95 +7,138 @@ namespace AtlasLibrary.Controllers
 {
     public class LoansPageController : Controller
     {
-        private readonly HttpClient _httpClient;
+        //private readonly HttpClient _httpClient;
+        private readonly HttpClient _loansClient;
+        private readonly HttpClient _itemsClient;
 
-        public LoansPageController()
+        public LoansPageController(IHttpClientFactory factory)
         {
-            _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri("https://localhost:7024/");
+            _loansClient = new HttpClient();
+            _loansClient.BaseAddress = new Uri("https://localhost:7024/");
+
+            _itemsClient = factory.CreateClient("itemsApi");
         }
 
         [HttpGet]
-        public IActionResult Create(int? itemId)
+        [HttpGet]
+        [HttpGet]
+        public async Task<IActionResult> Create()
         {
+            var cart = await _itemsClient.GetFromJsonAsync<List<CartItemViewModel>>("api/Cart")
+                       ?? new List<CartItemViewModel>();
+
+            if (!cart.Any())
+            {
+                TempData["ErrorMessage"] = "Varukorgen är tom.";
+                return RedirectToAction("Index", "Cart");
+            }
+
             var model = new CreateLoanViewModel
             {
-                ItemId = itemId ?? 0,
-                UserId = 1, // tillfälligt testvärde tills login är kopplat
-                ItemTitle = itemId.HasValue ? $"Bok #{itemId}" : "Ingen bok vald",
+                UserId = 1,
                 UserName = "Testanvändare",
                 LoanDate = DateTime.Today,
                 DueDate = DateTime.Today.AddDays(14),
-                Quantity = 1
+                CartItems = new List<CartItemViewModel>()
             };
+
+            foreach (var cartItem in cart)
+            {
+                // 🔥 HÄMTA ITEM FRÅN ITEMS API
+                var itemResponse = await _itemsClient.GetAsync($"api/Items/{cartItem.ItemId}");
+
+                if (itemResponse.IsSuccessStatusCode)
+                {
+                    var json = await itemResponse.Content.ReadAsStringAsync();
+
+                    var item = JsonSerializer.Deserialize<ItemViewModel>(json,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    // 👉 lägg till titel + bild i cartItem
+                    cartItem.Title = item?.Title ?? $"Bok #{cartItem.ItemId}";
+                    cartItem.ImageUrl = item?.ImageUrl ?? "";
+                }
+
+                model.CartItems.Add(cartItem);
+            }
 
             return View(model);
         }
+
+
 
         [HttpPost]
         public async Task<IActionResult> Create(CreateLoanViewModel model)
         {
             if (!ModelState.IsValid)
             {
+                var cartFallback = await _itemsClient.GetFromJsonAsync<List<CartItemViewModel>>("api/Cart")
+                                   ?? new List<CartItemViewModel>();
+
+                model.CartItems = cartFallback;
                 return View(model);
             }
 
-            var loanData = new
+            var cart = await _itemsClient.GetFromJsonAsync<List<CartItemViewModel>>("api/Cart")
+                       ?? new List<CartItemViewModel>();
+
+            if (!cart.Any())
             {
-                itemId = model.ItemId,
-                userId = model.UserId,
-                quantity = model.Quantity,
-                loanDate = model.LoanDate,
-                dueDate = model.DueDate,
-                returnedDate = (DateTime?)null,
-                status = "Pending"
-            };
+                TempData["ErrorMessage"] = "Varukorgen är tom.";
+                return RedirectToAction("Index", "Cart");
+            }
 
-            var json = JsonSerializer.Serialize(loanData);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            foreach (var cartItem in cart)
+            {
+                var loanData = new
+                {
+                    itemId = cartItem.ItemId,
+                    itemTitle = cartItem.Title,
+                    userId = model.UserId,
+                    quantity = cartItem.Quantity,
+                    loanDate = DateTime.Today,
+                    dueDate = model.DueDate,
+                    returnedDate = (DateTime?)null,
+                    status = "Pending"
+                };
 
-            var response = await _httpClient.PostAsync("api/Loans", content);
+                var json = JsonSerializer.Serialize(loanData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _loansClient.PostAsync("api/Loans", content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    ModelState.AddModelError(string.Empty, "Något gick fel när lånen skulle skapas.");
+                    model.CartItems = cart;
+                    return View(model);
+                }
+            }
+
+            foreach (var cartItem in cart)
+            {
+                await _itemsClient.DeleteAsync($"api/Cart/{cartItem.Id}");
+            }
+
+            TempData["SuccessMessage"] = "Lånen skapades!";
+            return RedirectToAction("Index", "Profile");
+        }
+        [HttpPost]
+        public async Task<IActionResult> RequestReturn(int id, int userId = 1)
+        {
+            var response = await _loansClient.PutAsync($"api/Loans/{id}/request-return", null);
 
             if (response.IsSuccessStatusCode)
             {
-                TempData["SuccessMessage"] = "Lånet skapades!";
-                return RedirectToAction("MyLoans", new { userId = model.UserId });
+                TempData["SuccessMessage"] = "Återlämning markerad och väntar på bekräftelse.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Det gick inte att markera återlämning.";
             }
 
-            ModelState.AddModelError(string.Empty, "Något gick fel när lånet skulle skapas.");
-
-            if (string.IsNullOrWhiteSpace(model.ItemTitle))
-                model.ItemTitle = $"Bok #{model.ItemId}";
-
-            if (string.IsNullOrWhiteSpace(model.UserName))
-                model.UserName = "Testanvändare";
-
-            return View(model);
+            return RedirectToAction("Index", "Profile");
         }
 
-        public async Task<IActionResult> MyLoans(int userId = 1)
-        {
-            var response = await _httpClient.GetAsync($"api/Loans/user/{userId}");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return View(new List<LoanViewModel>());
-            }
-
-            var json = await response.Content.ReadAsStringAsync();
-
-            var loans = JsonSerializer.Deserialize<List<LoanViewModel>>(json,
-            new JsonSerializerOptions
-            {
-                 PropertyNameCaseInsensitive = true
-            });
-
-            foreach (var loan in loans!)
-            {
-                loan.ItemTitle = $"Bok #{loan.ItemId}";
-            }
-
-            return View(loans ?? new List<LoanViewModel>());
-        }
     }
 }

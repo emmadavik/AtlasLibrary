@@ -91,8 +91,31 @@ namespace AtlasLibrary.LoansApi.Controllers
             return NoContent();
         }
 
-        [HttpPut("{id}/return")]
-        public async Task<IActionResult> ReturnLoan(int id)
+        
+
+        [HttpPut("{id}/request-return")]
+        public async Task<IActionResult> RequestReturn(int id)
+        {
+            var loan = await _context.Loans.FindAsync(id);
+
+            if (loan == null)
+            {
+                return NotFound();
+            }
+
+            if (loan.Status == "Returned")
+            {
+                return BadRequest("Lånet är redan återlämnat.");
+            }
+
+            loan.Status = "ReturnRequested";
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPut("{id}/confirm-return")]
+        public async Task<IActionResult> ConfirmReturn(int id)
         {
             var loan = await _context.Loans.FindAsync(id);
 
@@ -162,5 +185,28 @@ namespace AtlasLibrary.LoansApi.Controllers
 
             return Ok(report);
         }
+
+        [HttpGet("admin-report-items")]
+        public ActionResult<IEnumerable<AdminLoanReportItemDto>> GetAdminReportItems()
+        {
+            var result = _context.Loans
+                .Select(l => new AdminLoanReportItemDto
+                {
+                    Id = l.Id,
+                    Title = $"Bok #{l.ItemId}",
+                    ObjectType = "Book",
+                    BorrowerName = $"User {l.UserId}",
+                    BorrowerEmail = $"user{l.UserId}@atlaslibrary.se",
+                    BorrowedDate = l.LoanDate,
+                    ReturnedDate = l.ReturnedDate,
+                    Status = l.Status,
+                    Quantity = l.Quantity
+                })
+                .ToList();
+
+            return Ok(result);
+        }
+
+
     }
 }
