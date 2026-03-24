@@ -1,0 +1,41 @@
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<section class="hero-card">
+    <div>
+        <p class="eyebrow">Admin</p>
+        <h1>Panel för Rapporter och Påminnelser</h1>
+    </div>
+</section>
+
+<section class="stats-grid">
+    <div class="small-card">
+        <span class="stat-number">@ViewBag.ReportCount</span>
+        <span class="stat-label">Skapade Rapporter</span>
+    </div>
+    <div class="small-card">
+        <span class="stat-number">@ViewBag.ReminderCount</span>
+        <span class="stat-label">Skapade Påminnelser</span>
+    </div>
+</section>
+
+<section class="dashboard-grid">
+    <div class="admin-card">
+        <h2>Rapporter</h2>
+        <p>Skapa Rapporter från ett eller flera färdiga objekt.</p>
+        <div class="button-row">
+            <a class="btn-primary" asp-controller="Reports" asp-action="Create">Skapa ny Rapport</a>
+            <a class="btn-secondary" asp-controller="Reports" asp-action="Index">Visa Rapporter</a>
+        </div>
+    </div>
+
+    <div class="admin-card">
+        <h2>Påminnelser</h2>
+        <p>Skapa Påminnelser baserat på färdiga objekt.</p>
+        <div class="button-row">
+            <a class="btn-primary" asp-controller="Reminders" asp-action="Create">Skapa ny Påminnelse</a>
+            <a class="btn-secondary" asp-controller="Reminders" asp-action="Index">Visa Påminnelser</a>
+        </div>
+    </div>
+</section>
