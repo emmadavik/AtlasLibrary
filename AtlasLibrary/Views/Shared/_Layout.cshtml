@@ -11,6 +11,8 @@
     <title>@ViewData["Title"] - AtlasLibrary</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/AdminPanel.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/UserProfile.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/AtlasLibrary.styles.css" asp-append-version="true" />
 </head>
@@ -42,9 +44,21 @@
                             <a asp-controller="Cart" asp-action="Index" class="cart-link">
                                 <i class="fa-solid fa-cart-arrow-down"></i>
                             </a>
-                            <a class="btn btn-light profile-btn" href="#">Profile</a>
-                            <a class="btn login-btn" href="#">Log In</a>
+                       
                         </div>
+
+                        <div class="d-flex gap-2">
+                            @if (string.IsNullOrEmpty(token))
+                            {
+                                <a class="btn login-btn" asp-controller="Account" asp-action="Login">Logga in</a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-light profile-btn" asp-controller="Profile" asp-action="Index">Profil</a>
+                                <a class="btn login-btn" asp-controller="Account" asp-action="Logout">Logga ut</a>
+                            }
+                        </div>
+
                     </div>
                 </div>
             </nav>

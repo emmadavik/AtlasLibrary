@@ -1,0 +1,386 @@
+﻿
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+    color: var(--bs-secondary-color);
+    text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+    text-align: start;
+}
+
+html {
+    font-size: 14px;
+}
+
+body {
+    background-color: #f4f4f2;
+    color: #1f1f1f;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/*Styling för profil och login knapp*/
+.nav-pill-wrapper {
+    background-color: #e9e9e6;
+    border-radius: 999px;
+    padding: 10px 30px;
+}
+
+.profile-btn {
+    background-color: #f8f8f8;
+    border: 1px solid #d8d8d8;
+    color: #222;
+    border-radius: 4px;
+    padding: 8px 18px;
+}
+
+    .profile-btn:hover {
+        background-color: #eeeeee;
+        color: #222;
+    }
+
+.login-btn {
+    background-color: #234f39;
+    color: white;
+    border-radius: 4px;
+    padding: 8px 18px;
+}
+
+    .login-btn:hover {
+        background-color: #1b3e2d;
+        color: white;
+    }
+/* Login-sida */
+.login-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 40px 80px 40px;
+}
+
+.login-card {
+    max-width: 520px;
+    background-color: #efefed;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.login-content h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #234f39;
+    margin-bottom: 18px;
+    line-height: 1.1;
+}
+
+.login-content p {
+    font-size: 1.2rem;
+    color: #666666;
+    line-height: 1.5;
+    margin-bottom: 28px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group-custom {
+    display: flex;
+    flex-direction: column;
+}
+
+    .form-group-custom label {
+        font-size: 1rem;
+        font-weight: 500;
+        margin-bottom: 8px;
+        color: #1f1f1f;
+    }
+
+.login-input {
+    padding: 12px 14px;
+    border: 1px solid #d8d8d8;
+    border-radius: 10px;
+    font-size: 1rem;
+    background-color: #ffffff;
+    color: #1f1f1f;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+    .login-input:focus {
+        outline: none;
+        border-color: #234f39;
+        box-shadow: 0 0 0 0.2rem rgba(35, 79, 57, 0.15);
+    }
+
+.login-submit-btn {
+    display: inline-block;
+    background-color: #234f39;
+    color: white;
+    border: none;
+    text-decoration: none;
+    padding: 12px 22px;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: 0.2s ease-in-out;
+    width: fit-content;
+}
+
+    .login-submit-btn:hover {
+        background-color: #1b3e2d;
+        color: white;
+    }
+
+.login-error {
+    background-color: #f8d7da;
+    color: #842029;
+    border: 1px solid #f5c2c7;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 20px;
+}
+
+.login-success {
+    background-color: #d1e7dd;
+    color: #0f5132;
+    border: 1px solid #badbcc;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 20px;
+}
+
+.profile-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+    .profile-actions .profile-btn,
+    .profile-actions .login-submit-btn {
+        min-width: 170px;
+        text-align: center;
+    }
+
+/* Admin-sida */
+.admin-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 40px 80px 40px;
+}
+
+.admin-header {
+    margin-bottom: 30px;
+}
+
+    .admin-header h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #234f39;
+        margin-bottom: 18px;
+        line-height: 1.1;
+    }
+
+    .admin-header p {
+        font-size: 1.2rem;
+        color: #666666;
+        line-height: 1.5;
+        margin-bottom: 0;
+    }
+
+.admin-card {
+    background-color: #efefed;
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.admin-table-wrapper {
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: transparent;
+}
+
+    .admin-table thead th {
+        text-align: left;
+        padding: 16px 14px;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1f1f1f;
+        border-bottom: 1px solid #d7d7d2;
+    }
+
+    .admin-table tbody td {
+        padding: 16px 14px;
+        font-size: 1rem;
+        color: #1f1f1f;
+        border-bottom: 1px solid #d7d7d2;
+        vertical-align: middle;
+    }
+
+.role-badge {
+    display: inline-block;
+    background-color: #234f39;
+    color: white;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.admin-actions {
+    margin-bottom: 24px;
+}
+
+.admin-row-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.delete-form {
+    margin: 0;
+}
+
+.admin-delete-btn {
+    background-color: #8b2e2e;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 18px;
+    transition: 0.2s ease-in-out;
+}
+
+    .admin-delete-btn:hover {
+        background-color: #6f2323;
+        color: white;
+    }
+
+/* Profil + lån sida */
+.profile-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 40px 80px 40px;
+}
+
+.profile-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 28px;
+    align-items: start;
+}
+
+.profile-panel {
+    background-color: #efefed;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.loans-panel {
+    min-width: 0;
+}
+
+.loans-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 12px;
+}
+
+.loans-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: transparent;
+}
+
+    .loans-table thead th {
+        text-align: left;
+        padding: 16px 14px;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1f1f1f;
+        border-bottom: 1px solid #d7d7d2;
+        white-space: nowrap;
+    }
+
+    .loans-table tbody td {
+        padding: 16px 14px;
+        font-size: 1rem;
+        color: #1f1f1f;
+        border-bottom: 1px solid #d7d7d2;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+.loan-status-badge {
+    display: inline-block;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+    .loan-status-badge.returned {
+        background-color: #234f39;
+        color: white;
+    }
+
+    .loan-status-badge.pending {
+        background-color: #e7c24a;
+        color: #1f1f1f;
+    }
+
+.empty-loans {
+    background-color: #f8f8f8;
+    border: 1px solid #d8d8d8;
+    border-radius: 10px;
+    padding: 16px 18px;
+    color: #555;
+    margin-top: 12px;
+}
+
+@media (max-width: 992px) {
+    .profile-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-panel {
+        padding: 32px;
+    }
+}
+
+.top-navigation {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}

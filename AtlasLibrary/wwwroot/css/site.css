@@ -180,3 +180,15 @@ footer,
         background-color: #1b3e2d;
         color: white;
     }
+
+.cart-link {
+    font-size: 22px;
+    color: #1f5133;
+    margin-right: 20px;
+    padding: 5px;
+}
+
+
+    .cart-link:hover {
+        color: #2f7d4f;
+    }
