@@ -18,8 +18,8 @@
     </nav>
 
     <div class="header-right">
-        <a href="/Profile" class="top-action-btn profile-btn">Profil</a>
-        <a href="/Login" class="top-action-btn sign-in-btn">Logga In</a>
+        <a href="@(Configuration["ExternalLinks:ProfileUrl"] ?? "#")" class="top-action-btn profile-btn">Profil</a>
+        <a href="@(Configuration["ExternalLinks:LoginUrl"] ?? "#")" class="top-action-btn sign-in-btn">Logga In</a>
     </div>
 </header>
 
