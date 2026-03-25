@@ -13,5 +13,5 @@ public class Report
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    public string SelectedObjectIds { get; set; } = string.Empty;
+    public string? SelectedObjectIds { get; set; }
 }

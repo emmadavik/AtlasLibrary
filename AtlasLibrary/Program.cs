@@ -1,3 +1,5 @@
+using AtlasLibrary.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -20,13 +22,23 @@ builder.Services.AddHttpClient("LoansApi", client =>
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 
-// HttpClient för itemsApi
-builder.Services.AddHttpClient("itemsApi", client =>
+
+
+builder.Services.AddHttpClient<ItemsService>((serviceProvider, httpClient) =>
 {
-    client.BaseAddress = new Uri("http://localhost:5079/");
+    //Hämta config
+    var config = serviceProvider.GetRequiredService<IConfiguration>();
+
+    // Hämta adress till ItemsService ifrån config
+
+    string adress = config.GetValue<string>("ItemServiceAdress") ?? "";
+
+
+
+    httpClient.BaseAddress = new Uri(adress);
 });
 
-builder.Services.AddHttpClient("equipmentItemsApi", client =>
+builder.Services.AddHttpClient("EquipmentItemsApi", client =>
 {
     client.BaseAddress = new Uri("https://localhost:xxxx/"); 
 });
