@@ -7,20 +7,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 
-builder.Services.AddHttpClient<ItemsService>((serviceProvider , httpClient) =>
-{
-    //Hämta config
-    var config = serviceProvider.GetRequiredService<IConfiguration>();
-    
-    // Hämta adress till ItemsService ifrån config
+// Add services to the container.
+builder.Services.AddControllersWithViews();
 
-    string adress = config.GetValue<string>("ItemServiceAdress") ?? "";
-        
-    
+builder.Services.AddHttpClient("ItemsService", (serviceProvider, httpClient) =>
+{
+    var config = serviceProvider.GetRequiredService<IConfiguration>();
+    string? adress = config.GetValue<string>("ItemServiceAdress");
+
+    if (string.IsNullOrWhiteSpace(adress))
+    {
+        throw new InvalidOperationException("ItemServiceAdress saknas i appsettings.");
+    }
 
     httpClient.BaseAddress = new Uri(adress);
 });
-
 
 var app = builder.Build();
 

@@ -7,9 +7,9 @@ public class ItemsService
 {
     private readonly HttpClient _httpClient;
 
-    public ItemsService(HttpClient httpClient)
+    public ItemsService(IHttpClientFactory factory)
     {
-        _httpClient = httpClient;
+        _httpClient = factory.CreateClient("ItemsService");
     }
 
     public async Task<List<ItemViewModel>> GetBooks(string? q)
