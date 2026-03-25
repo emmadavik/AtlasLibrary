@@ -11,6 +11,10 @@ builder.Services.AddScoped<ExternalObjectApiService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddHttpClient("UsersApi", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:UsersApiBaseUrl"]!);
+});
 
 var app = builder.Build();
 
