@@ -40,16 +40,18 @@
                                 <a class="nav-link" asp-controller="Home" asp-action="About">About</a>
                             </li>
 
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Return" asp-action="Index">Återlämning</a>
-                            </li>
+                            @if (!string.IsNullOrEmpty(token))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Return" asp-action="Index">Återlämning</a>
+                                </li>
+                            }
                         </ul>
 
                         <div class="d-flex gap-2">
                             <a asp-controller="Cart" asp-action="Index" class="cart-link">
                                 <i class="fa-solid fa-cart-arrow-down"></i>
                             </a>
-                       
                         </div>
 
                         <div class="d-flex gap-2">
@@ -63,13 +65,12 @@
                                 <a class="btn login-btn" asp-controller="Account" asp-action="Logout">Logga ut</a>
                             }
                         </div>
-
                     </div>
                 </div>
             </nav>
         </header>
 
-        <main role="main" class="container pb-3 main-content">
+        <main role="main" class="container-fluid px-4 pb-3 main-content">
             @RenderBody()
         </main>
 

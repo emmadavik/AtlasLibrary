@@ -5,6 +5,12 @@
 }
 
 <div class="profile-page">
+    <div class="top-navigation">
+        <a asp-controller="Home" asp-action="Index" class="profile-btn text-decoration-none">
+            ← Startsidan
+        </a>
+    </div>
+
     <div class="profile-layout">
         <div class="profile-panel">
             <div class="login-content">
@@ -36,17 +42,31 @@
                     <div class="form-group-custom">
                         <label for="Profile_Epost">E-post</label>
                         <input type="text" id="Profile_Epost" name="Profile.Epost" class="login-input" value="@Model.Profile.Epost" required />
-                     
                     </div>
 
-                    
                     <div class="profile-actions">
-                        <button type="submit" class="login-submit-btn">Spara ändringar</button>
-                        <a asp-controller="Profile" asp-action="ChangePassword" class="profile-btn text-decoration-none">Ändra lösenord</a>
+                        <div class="profile-action-row">
+                            <button type="submit" class="login-submit-btn">Spara ändringar</button>
+
+                            <a asp-controller="Profile" asp-action="ChangePassword" class="profile-btn text-decoration-none">
+                                Ändra lösenord
+                            </a>
+                        </div>
 
                         @if (Model.Profile.IsAdmin)
                         {
-                            <a asp-controller="Admin" asp-action="Index" class="profile-btn text-decoration-none">Hantera användare</a>
+                            <div class="profile-action-row">
+                                <a asp-controller="Admin" asp-action="Index" class="profile-btn text-decoration-none">
+                                    Hantera användare
+                                </a>
+                            </div>
+
+                            <div class="profile-action-row">
+                                <a href="https://atlasadminpanel-axcuc3e8hva9ghg6.swedencentral-01.azurewebsites.net"
+                                       class="profile-btn text-decoration-none">
+                                    Avancerade adminfunktioner
+                                </a>
+                            </div>
                         }
                     </div>
                 </form>

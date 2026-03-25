@@ -11,7 +11,7 @@ public class CartController : Controller
 
    public CartController(IHttpClientFactory factory)
    {
-       _httpClient = factory.CreateClient("itemsApi");
+       _httpClient = factory.CreateClient("ItemsService");
    }
 
 

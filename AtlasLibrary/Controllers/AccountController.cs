@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
@@ -63,6 +64,25 @@ namespace AtlasLibrary.Controllers
             HttpContext.Session.SetString("JwtToken", loginResponse.Token);
             HttpContext.Session.SetString("UserRole", loginResponse.Roll ?? "");
 
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", loginResponse.Token);
+
+            var meResponse = await client.GetAsync("api/users/me");
+
+            if (meResponse.IsSuccessStatusCode)
+            {
+                var meJson = await meResponse.Content.ReadAsStringAsync();
+
+                var currentUser = JsonSerializer.Deserialize<CurrentUserResponse>(
+                    meJson,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (currentUser != null)
+                {
+                    HttpContext.Session.SetString("UserId", currentUser.Id.ToString());
+                }
+            }
+
             return RedirectToAction("Index", "Home");
         }
 
@@ -111,6 +131,14 @@ namespace AtlasLibrary.Controllers
         private class LoginResponse
         {
             public string Token { get; set; } = string.Empty;
+            public string Roll { get; set; } = string.Empty;
+        }
+
+        private class CurrentUserResponse
+        {
+            public int Id { get; set; }
+            public string Namn { get; set; } = string.Empty;
+            public string Epost { get; set; } = string.Empty;
             public string Roll { get; set; } = string.Empty;
         }
     }
