@@ -12,6 +12,11 @@ Console.WriteLine("Connection string: " + builder.Configuration.GetConnectionStr
 builder.Services.AddDbContext<LoansDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// HttpClient för UsersApi
+builder.Services.AddHttpClient("UsersApi", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7156/");
+});
 
 var app = builder.Build();
 

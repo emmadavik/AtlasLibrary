@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text.Json;
+using System.Net.Http.Headers;
 
 namespace AtlasLibrary.LoansApi.Controllers
 {
@@ -13,10 +15,12 @@ namespace AtlasLibrary.LoansApi.Controllers
     public class LoansController : ControllerBase
     {
         private readonly LoansDbContext _context;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public LoansController(LoansDbContext context)
+        public LoansController(LoansDbContext context, IHttpClientFactory httpClientFactory)
         {
             _context = context;
+            _httpClientFactory = httpClientFactory;
         }
 
         [HttpGet]
@@ -24,7 +28,7 @@ namespace AtlasLibrary.LoansApi.Controllers
         {
             return await _context.Loans.ToListAsync();
         }
-        
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Loan>> GetLoan(int id)
         {
@@ -46,7 +50,6 @@ namespace AtlasLibrary.LoansApi.Controllers
 
             return CreatedAtAction(nameof(GetLoan), new { id = loan.Id }, loan);
         }
-
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateLoan(int id, Loan updatedLoan)
@@ -90,8 +93,6 @@ namespace AtlasLibrary.LoansApi.Controllers
 
             return NoContent();
         }
-
-        
 
         [HttpPut("{id}/request-return")]
         public async Task<IActionResult> RequestReturn(int id)
@@ -187,26 +188,69 @@ namespace AtlasLibrary.LoansApi.Controllers
         }
 
         [HttpGet("admin-report-items")]
-        public ActionResult<IEnumerable<AdminLoanReportItemDto>> GetAdminReportItems()
+        public async Task<ActionResult<IEnumerable<AdminLoanReportItemDto>>> GetAdminReportItems()
         {
-            var result = _context.Loans
-                .Select(l => new AdminLoanReportItemDto
+            var users = new List<UserDto>();
+
+            try
+            {
+                var usersClient = _httpClientFactory.CreateClient("UsersApi");
+
+                var incomingAuthHeader = Request.Headers["Authorization"].ToString();
+
+                if (!string.IsNullOrWhiteSpace(incomingAuthHeader))
                 {
-                    Id = l.Id,
-                    Title = $"Bok #{l.ItemId}",
-                    ObjectType = "Book",
-                    BorrowerName = $"User {l.UserId}",
-                    BorrowerEmail = $"user{l.UserId}@atlaslibrary.se",
-                    BorrowedDate = l.LoanDate,
-                    ReturnedDate = l.ReturnedDate,
-                    Status = l.Status,
-                    Quantity = l.Quantity
+                    usersClient.DefaultRequestHeaders.Authorization =
+                        AuthenticationHeaderValue.Parse(incomingAuthHeader);
+                }
+
+                var response = await usersClient.GetAsync("api/users");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var usersJson = await response.Content.ReadAsStringAsync();
+
+                    users = JsonSerializer.Deserialize<List<UserDto>>(usersJson,
+                        new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        }) ?? new List<UserDto>();
+                }
+            }
+            catch
+            {
+                // fallback längre ner
+            }
+
+            var result = _context.Loans
+                .AsEnumerable()
+                .Select(l =>
+                {
+                    var user = users.FirstOrDefault(u => u.Id == l.UserId);
+
+                    return new AdminLoanReportItemDto
+                    {
+                        Id = l.Id,
+                        Title = $"Bok #{l.ItemId}",
+                        ObjectType = "Book",
+                        BorrowerName = user?.Namn ?? $"User {l.UserId}",
+                        BorrowerEmail = user?.Epost ?? $"user{l.UserId}@atlaslibrary.se",
+                        BorrowedDate = l.LoanDate,
+                        ReturnedDate = l.ReturnedDate,
+                        Status = l.Status,
+                        Quantity = l.Quantity
+                    };
                 })
                 .ToList();
 
             return Ok(result);
         }
 
-
+        private class UserDto
+        {
+            public int Id { get; set; }
+            public string Namn { get; set; } = string.Empty;
+            public string Epost { get; set; } = string.Empty;
+        }
     }
 }

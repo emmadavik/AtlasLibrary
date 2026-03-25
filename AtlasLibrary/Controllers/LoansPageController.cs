@@ -7,24 +7,29 @@ namespace AtlasLibrary.Controllers
 {
     public class LoansPageController : Controller
     {
-        
-            private readonly HttpClient _httpClient;
+        private readonly HttpClient _itemsClient;
+        private readonly HttpClient _loansClient;
 
-            private readonly string _loansApiUrl = "https://atlas-loans-api-emmaa-bfdhc2h2h5bwh2a8.swedencentral-01.azurewebsites.net/api/Loans";
-            private readonly string _itemsApiBaseUrl = "https://abdisalam-items-chauhsfzdabwdkg5.swedencentral-01.azurewebsites.net/";
-
-            public LoansPageController(IHttpClientFactory httpClientFactory)
-            {
-                _httpClient = httpClientFactory.CreateClient();
-
-            }
-
-
+        public LoansPageController(IHttpClientFactory httpClientFactory)
+        {
+            _itemsClient = httpClientFactory.CreateClient("ItemsService");
+            _loansClient = httpClientFactory.CreateClient("LoansApi");
+        }
 
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var cart = await _httpClient.GetFromJsonAsync<List<CartItemViewModel>>($"{_itemsApiBaseUrl}api/Cart")
+            var token = HttpContext.Session.GetString("JwtToken");
+            var userIdString = HttpContext.Session.GetString("UserId");
+            var userName = HttpContext.Session.GetString("UserName");
+
+            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(userIdString))
+            {
+                TempData["ErrorMessage"] = "Du måste logga in för att skapa lån.";
+                return RedirectToAction("Login", "Account");
+            }
+
+            var cart = await _itemsClient.GetFromJsonAsync<List<CartItemViewModel>>("api/Cart")
                        ?? new List<CartItemViewModel>();
 
             if (!cart.Any())
@@ -35,44 +40,43 @@ namespace AtlasLibrary.Controllers
 
             var model = new CreateLoanViewModel
             {
-                UserId = 1,
-                UserName = "Testanvändare",
+                UserId = int.Parse(userIdString),
+                UserName = userName,
                 LoanDate = DateTime.Today,
                 DueDate = DateTime.Today.AddDays(14),
-                CartItems = new List<CartItemViewModel>()
+                CartItems = cart
             };
-
-            var allItems = await _httpClient.GetFromJsonAsync<List<ItemViewModel>>($"{_itemsApiBaseUrl}api/Items")
-                           ?? new List<ItemViewModel>();
-
-            foreach (var cartItem in cart)
-            {
-                var item = allItems.FirstOrDefault(i => i.Id == cartItem.ItemId);
-
-                cartItem.Title = item?.Title ?? $"Bok #{cartItem.ItemId}";
-                cartItem.ImageUrl = item?.ImageUrl ?? "";
-
-                model.CartItems.Add(cartItem);
-            }
 
             return View(model);
         }
 
-
-
         [HttpPost]
         public async Task<IActionResult> Create(CreateLoanViewModel model)
         {
+            var token = HttpContext.Session.GetString("JwtToken");
+            var userIdString = HttpContext.Session.GetString("UserId");
+            var userName = HttpContext.Session.GetString("UserName");
+
+            if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(userIdString))
+            {
+                TempData["ErrorMessage"] = "Du måste logga in för att skapa lån.";
+                return RedirectToAction("Login", "Account");
+            }
+
+            int currentUserId = int.Parse(userIdString);
+
             if (!ModelState.IsValid)
             {
-                var cartFallback = await _httpClient.GetFromJsonAsync<List<CartItemViewModel>>($"{_itemsApiBaseUrl}api/Cart")
+                var cartFallback = await _itemsClient.GetFromJsonAsync<List<CartItemViewModel>>("api/Cart")
                                    ?? new List<CartItemViewModel>();
 
+                model.UserId = currentUserId;
+                model.UserName = userName;
                 model.CartItems = cartFallback;
                 return View(model);
             }
 
-            var cart = await _httpClient.GetFromJsonAsync<List<CartItemViewModel>>($"{_itemsApiBaseUrl}api/Cart")
+            var cart = await _itemsClient.GetFromJsonAsync<List<CartItemViewModel>>("api/Cart")
                        ?? new List<CartItemViewModel>();
 
             if (!cart.Any())
@@ -81,21 +85,15 @@ namespace AtlasLibrary.Controllers
                 return RedirectToAction("Index", "Cart");
             }
 
-            var allItems = await _httpClient.GetFromJsonAsync<List<ItemViewModel>>($"{_itemsApiBaseUrl}api/Items")
-                           ?? new List<ItemViewModel>();
-
             foreach (var cartItem in cart)
             {
-                var item = allItems.FirstOrDefault(i => i.Id == cartItem.ItemId);
-                var itemTitle = item?.Title ?? $"Bok #{cartItem.ItemId}";
-
                 var loanData = new
                 {
                     itemId = cartItem.ItemId,
-                    itemTitle = itemTitle,
-                    userId = model.UserId,
+                    itemTitle = cartItem.Title,
+                    userId = currentUserId,
                     quantity = cartItem.Quantity,
-                    loanDate = DateTime.Today,
+                    loanDate = model.LoanDate,
                     dueDate = model.DueDate,
                     returnedDate = (DateTime?)null,
                     status = "Pending"
@@ -104,11 +102,17 @@ namespace AtlasLibrary.Controllers
                 var json = JsonSerializer.Serialize(loanData);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await _httpClient.PostAsync(_loansApiUrl, content);
+                var response = await _loansClient.PostAsync("api/Loans", content);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    ModelState.AddModelError(string.Empty, "Något gick fel när lånen skulle skapas.");
+                    var errorText = await response.Content.ReadAsStringAsync();
+
+                    ModelState.AddModelError(string.Empty,
+                        $"Något gick fel när lånen skulle skapas. Status: {response.StatusCode}. Fel: {errorText}");
+
+                    model.UserId = currentUserId;
+                    model.UserName = userName;
                     model.CartItems = cart;
                     return View(model);
                 }
@@ -116,12 +120,11 @@ namespace AtlasLibrary.Controllers
 
             foreach (var cartItem in cart)
             {
-                await _httpClient.DeleteAsync($"{_itemsApiBaseUrl}api/Cart/{cartItem.Id}");
+                await _itemsClient.DeleteAsync($"api/Cart/{cartItem.Id}");
             }
 
             TempData["SuccessMessage"] = "Lånen skapades!";
             return RedirectToAction("Index", "Profile");
         }
-
     }
 }

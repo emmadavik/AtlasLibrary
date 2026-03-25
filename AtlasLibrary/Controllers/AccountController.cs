@@ -30,6 +30,7 @@ namespace AtlasLibrary.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string epost, string losenord)
         {
+            HttpContext.Session.Clear();
             var client = _httpClientFactory.CreateClient("UsersApi");
 
             var loginData = new
