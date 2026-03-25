@@ -1,12 +1,15 @@
 @model LibraryAdminPanel.Models.ReminderFormViewModel
+
 @{
     ViewData["Title"] = "Skapa Påminnelse";
 }
 
 <div class="form-card">
     <h1>Skapa ny Påminnelse</h1>
-    
+
     <form asp-action="Create" method="post" class="simple-form">
+        @Html.AntiForgeryToken()
+
         <div asp-validation-summary="ModelOnly" class="validation-text"></div>
 
         <div class="form-group">

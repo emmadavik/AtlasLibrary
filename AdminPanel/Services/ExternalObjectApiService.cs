@@ -17,7 +17,7 @@ public class ExternalObjectApiService
     public async Task<List<CompletedObject>> GetCompletedObjectsAsync()
     {
         var baseUrl = _configuration["ExternalObjectsApi:BaseUrl"];
-        var endpoint = _configuration["ExternalObjectsApi:CompletedObjectsEndpoint"];
+        var endpoint = _configuration["ExternalObjectsApi:AdminReportItemsEndpoint"];
 
         if (string.IsNullOrWhiteSpace(baseUrl) || string.IsNullOrWhiteSpace(endpoint))
         {
@@ -27,20 +27,15 @@ public class ExternalObjectApiService
         try
         {
             var client = _httpClientFactory.CreateClient();
-            client.BaseAddress = new Uri(baseUrl);
+            var url = $"{baseUrl.TrimEnd('/')}/{endpoint.TrimStart('/')}";
 
-            var response = await client.GetAsync(endpoint);
+            var result = await client.GetFromJsonAsync<List<CompletedObject>>(url);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                return new List<CompletedObject>();
-            }
-
-            var result = await response.Content.ReadFromJsonAsync<List<CompletedObject>>();
             return result ?? new List<CompletedObject>();
         }
-        catch
+        catch (Exception ex)
         {
+            Console.WriteLine($"Error fetching completed objects: {ex.Message}");
             return new List<CompletedObject>();
         }
     }
