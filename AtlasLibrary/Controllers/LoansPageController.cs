@@ -8,25 +8,15 @@ namespace AtlasLibrary.Controllers
     public class LoansPageController : Controller
     {
         //private readonly HttpClient _httpClient;
-        //private readonly HttpClient _loansClient;
-        //private readonly HttpClient _itemsClient;
         private readonly HttpClient _loansClient;
-        private readonly HttpClient _bookItemsClient;
-        private readonly HttpClient _equipmentItemsClient;
+        private readonly HttpClient _itemsClient;
 
         public LoansPageController(IHttpClientFactory factory)
         {
-            //_loansClient = new HttpClient();
-            //_loansClient.BaseAddress = new Uri("https://localhost:7024/");
-
-            //_itemsClient = factory.CreateClient("itemsApi");
-
             _loansClient = new HttpClient();
             _loansClient.BaseAddress = new Uri("https://localhost:7024/");
 
-            _bookItemsClient = factory.CreateClient("itemsApi");
-            _equipmentItemsClient = factory.CreateClient("equipmentItemsApi");
-
+            _itemsClient = factory.CreateClient("itemsApi");
         }
 
         [HttpGet]
@@ -54,7 +44,7 @@ namespace AtlasLibrary.Controllers
 
             foreach (var cartItem in cart)
             {
-                
+                // 🔥 HÄMTA ITEM FRÅN ITEMS API
                 var itemResponse = await _itemsClient.GetAsync($"api/Items/{cartItem.ItemId}");
 
                 if (itemResponse.IsSuccessStatusCode)
@@ -64,7 +54,7 @@ namespace AtlasLibrary.Controllers
                     var item = JsonSerializer.Deserialize<ItemViewModel>(json,
                         new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                   
+                    // 👉 lägg till titel + bild i cartItem
                     cartItem.Title = item?.Title ?? $"Bok #{cartItem.ItemId}";
                     cartItem.ImageUrl = item?.ImageUrl ?? "";
                 }
