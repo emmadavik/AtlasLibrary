@@ -13,7 +13,6 @@ namespace ItemsAPI.Migrations
     [Migration("20260318094953_UpdateItemFields")]
     partial class UpdateItemFields
     {
-        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

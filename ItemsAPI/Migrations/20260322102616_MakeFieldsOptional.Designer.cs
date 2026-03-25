@@ -13,7 +13,6 @@ namespace ItemsAPI.Migrations
     [Migration("20260322102616_MakeFieldsOptional")]
     partial class MakeFieldsOptional
     {
-        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618

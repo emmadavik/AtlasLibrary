@@ -3,28 +3,23 @@
 <h1>Redigera objekt</h1>
 
 <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+    <input type="hidden" asp-for="Id" />
+
     <div>
         <label>Titel</label>
         <input asp-for="Title" />
     </div>
-    <div>
+    <div id="author-section">
         <label>Författare</label>
-        <input asp-for="Author" />
+        <input asp-for="Author" id="author-input" />
     </div>
     <div>
         <label>Typ</label>
-        <select asp-for="Type">
+        <select asp-for="Type" id="type-select">
             <option value="Bok">Bok</option>
             <option value="Utrustning">Utrustning</option>
+            <option value="Rapport">Rapport</option>
         </select>
-    </div>
-    <div>
-        <label>Modell</label>
-        <input asp-for="Model" />
-    </div>
-    <div>
-        <label>Antal</label>
-        <input asp-for="Quantity" type="number" />
     </div>
     <div>
         <label>Beskrivning</label>
@@ -41,3 +36,20 @@
     <button type="submit">Spara</button>
     <a asp-action="Index">Avbryt</a>
 </form>
+
+@section Scripts {
+    <script>
+        const typeSelect = document.getElementById('type-select');
+        const authorSection = document.getElementById('author-section');
+        const authorInput = document.getElementById('author-input');
+
+        function updateVisibility() {
+            var isHidden = typeSelect.value === 'Utrustning';
+            authorSection.style.display = isHidden ? 'none' : 'block';
+            if (isHidden && authorInput) authorInput.value = '';
+        }
+        
+        updateVisibility();
+        typeSelect.addEventListener('change', updateVisibility);
+    </script>
+}

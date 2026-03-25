@@ -32,13 +32,14 @@ public class ItemsController : ControllerBase
     [HttpPost]
     public IActionResult Create(Item item)
     {
+        if (item.Type == "Utrustning")
+        {
+            item.Author = string.Empty;
+        }
+
         if (!ModelState.IsValid)
         {
-            var errors = ModelState
-                .Where(x => x.Value.Errors.Count > 0)
-                .Select(x => new { x.Key, x.Value.Errors })
-                .ToList();
-            return BadRequest(errors);
+            return BadRequest(ModelState);
         }
 
         _context.Items.Add(item);
@@ -52,11 +53,14 @@ public class ItemsController : ControllerBase
         var item = _context.Items.Find(id);
         if (item == null) return NotFound();
 
+        if (item.Type == "Utrustning")
+        {
+            item.Author = string.Empty;
+        }
+
         item.Title = updatedItem.Title;
         item.Author = updatedItem.Author;
         item.Type = updatedItem.Type;
-        item.Model = updatedItem.Model;
-        item.Quantity = updatedItem.Quantity;
         item.Description = updatedItem.Description;
         item.IsAvailable = updatedItem.IsAvailable;
         item.ImageUrl = updatedItem.ImageUrl;

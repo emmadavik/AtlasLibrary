@@ -4,10 +4,8 @@
 
 namespace ItemsAPI.Migrations
 {
-    /// <inheritdoc />
     public partial class UpdateItemFields : Migration
     {
-        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.RenameColumn(
@@ -37,7 +35,6 @@ namespace ItemsAPI.Migrations
                 defaultValue: false);
         }
 
-        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(

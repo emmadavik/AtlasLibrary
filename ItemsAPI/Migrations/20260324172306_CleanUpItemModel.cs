@@ -4,20 +4,14 @@
 
 namespace ItemsAPI.Migrations
 {
-    public partial class MakeFieldsOptional : Migration
+    /// <inheritdoc />
+    public partial class CleanUpItemModel : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
-                name: "Model",
-                table: "Items",
-                type: "TEXT",
-                nullable: true,
-                oldClrType: typeof(string),
-                oldType: "TEXT");
-
-            migrationBuilder.AlterColumn<string>(
-                name: "ImageUrl",
+                name: "Author",
                 table: "Items",
                 type: "TEXT",
                 nullable: true,
@@ -25,20 +19,11 @@ namespace ItemsAPI.Migrations
                 oldType: "TEXT");
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<string>(
-                name: "Model",
-                table: "Items",
-                type: "TEXT",
-                nullable: false,
-                defaultValue: "",
-                oldClrType: typeof(string),
-                oldType: "TEXT",
-                oldNullable: true);
-
-            migrationBuilder.AlterColumn<string>(
-                name: "ImageUrl",
+                name: "Author",
                 table: "Items",
                 type: "TEXT",
                 nullable: false,

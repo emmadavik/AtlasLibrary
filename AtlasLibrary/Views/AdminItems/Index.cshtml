@@ -1,17 +1,16 @@
 ﻿@model List<AtlasLibrary.Models.Item>
 
 <h1>Administrera objekt</h1>
+<a asp-action="Create" class="btn btn-secondary mb-3">Lägg till nytt objekt</a>
 
-<a asp-action="Create">Lägg till nytt objekt</a>
-
-<table>
+<table class="table table-striped">
     <thead>
     <tr>
         <th>Titel</th>
         <th>Författare</th>
         <th>Typ</th>
-        <th>Antal</th>
         <th>Tillgänglig</th>
+        <th>Åtgärder</th>
     </tr>
     </thead>
     <tbody>
@@ -19,17 +18,19 @@
     {
         <tr>
             <td>@item.Title</td>
-            <td>@item.Author</td>
+            <td>@(item.Type != "Utrustning" ? item.Author : "---")</td>
             <td>@item.Type</td>
-            <td>@item.Model</td>
-            <td>@item.Quantity</td>
-            <td>@item.IsAvailable</td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Redigera</a>
-                <form asp-action="Delete" asp-route-id="@item.Id" method="post">
-                    <button type="submit">Ta bort</button>
+            <td>@(item.IsAvailable ? "Ja" : "Nej")</td>
+            
+            <td class="d-flex gap-1">
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">Redigera</a>
+
+                <form asp-action="Delete" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Radera?');">
+                    <button type="submit" class="btn btn-sm btn-outline-secondary">Ta bort</button>
                 </form>
             </td>
+            
+            
         </tr>
     }
     </tbody>
