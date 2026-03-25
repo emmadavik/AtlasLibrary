@@ -6,7 +6,7 @@
 
     <div class="card p-4 shadow-sm">
 
-        <!-- LISTA MED ITEMS -->
+        
         <h4 class="mb-3">Dina valda items</h4>
 
         <table class="table">
@@ -33,18 +33,18 @@
             </tbody>
         </table>
 
-        <!-- FORM -->
+       
         <form asp-action="Create" method="post">
 
             <input type="hidden" asp-for="UserId" />
 
-            <!-- ÅTERLÄMNINGS DATUM -->
+            
             <div class="mb-3">
                 <label class="form-label">Återlämningsdatum</label>
                 <input asp-for="DueDate" type="date" class="form-control" />
             </div>
 
-            <!-- KNAPP -->
+            
             <button type="submit" class="btn btn-success w-100">
                 Bekräfta lån
             </button>
