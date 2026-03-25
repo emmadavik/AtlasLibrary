@@ -5,6 +5,7 @@
         public int Id { get; set; }
         public int ItemId { get; set; }
         public string? ItemTitle { get; set; }
+        public string ItemType { get; set; } = string.Empty;
         public int UserId { get; set; }
         public int Quantity { get; set; }
         public DateTime LoanDate { get; set; }
