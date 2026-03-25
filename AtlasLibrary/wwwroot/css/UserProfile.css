@@ -359,14 +359,14 @@ footer,
     }
 
 .profile-page {
-    max-width: 1400px;
+    max-width: 1700px;
     margin: 0 auto;
     padding: 40px 24px 80px 24px;
 }
 
 .profile-layout {
     display: grid;
-    grid-template-columns: 1.2fr 1.35fr;
+    grid-template-columns: 1fr 2fr;
     gap: 36px;
     align-items: start;
 }
@@ -414,6 +414,7 @@ footer,
     width: 100%;
     border-collapse: collapse;
     background-color: transparent;
+    table-layout: auto;
 }
 
     .loans-table thead th {
@@ -423,7 +424,7 @@ footer,
         font-weight: 600;
         color: #1f1f1f;
         border-bottom: 1px solid #d7d7d2;
-        white-space: nowrap;
+        white-space: normal;
     }
 
     .loans-table tbody td {
@@ -432,7 +433,12 @@ footer,
         color: #1f1f1f;
         border-bottom: 1px solid #d7d7d2;
         vertical-align: middle;
-        white-space: nowrap;
+        white-space: normal;
+    }
+
+    .loans-table th:first-child,
+    .loans-table td:first-child {
+        width: 50%;
     }
 
 .loan-status-badge {

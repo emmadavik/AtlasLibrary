@@ -16,6 +16,20 @@ namespace AtlasLibrary.Controllers
 
         public async Task<IActionResult> Index()
         {
+            var token = HttpContext.Session.GetString("JwtToken");
+            var userIdString = HttpContext.Session.GetString("UserId");
+
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            if (!int.TryParse(userIdString, out int loggedInUserId))
+            {
+                TempData["ErrorMessage"] = "Det gick inte att identifiera den inloggade användaren.";
+                return RedirectToAction("Login", "Account");
+            }
+
             var response = await _httpClient.GetAsync("api/Loans");
 
             if (!response.IsSuccessStatusCode)
@@ -29,19 +43,40 @@ namespace AtlasLibrary.Controllers
                 new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
-                });
+                }) ?? new List<ReturnViewModel>();
 
-            //foreach (var loan in loans ?? new List<ReturnViewModel>())
-            //{
-            //    loan.ItemTitle = $"Bok #{loan.ItemId}";
-            //}
+            var userLoans = loans
+                .Where(loan => loan.UserId == loggedInUserId)
+                .ToList();
 
-            return View(loans ?? new List<ReturnViewModel>());
+            return View(userLoans);
         }
 
         [HttpPost]
         public async Task<IActionResult> ConfirmReturn(int id)
         {
+            var token = HttpContext.Session.GetString("JwtToken");
+            var userIdString = HttpContext.Session.GetString("UserId");
+
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            if (!int.TryParse(userIdString, out int loggedInUserId))
+            {
+                TempData["ErrorMessage"] = "Det gick inte att identifiera den inloggade användaren.";
+                return RedirectToAction("Login", "Account");
+            }
+
+            var loanBelongsToUser = await LoanBelongsToLoggedInUser(id, loggedInUserId);
+
+            if (!loanBelongsToUser)
+            {
+                TempData["ErrorMessage"] = "Du har inte behörighet att hantera detta lån.";
+                return RedirectToAction("Index");
+            }
+
             var response = await _httpClient.PutAsync($"api/Loans/{id}/confirm-return", null);
 
             if (response.IsSuccessStatusCode)
@@ -59,6 +94,28 @@ namespace AtlasLibrary.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteLoan(int id)
         {
+            var token = HttpContext.Session.GetString("JwtToken");
+            var userIdString = HttpContext.Session.GetString("UserId");
+
+            if (string.IsNullOrEmpty(token))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            if (!int.TryParse(userIdString, out int loggedInUserId))
+            {
+                TempData["ErrorMessage"] = "Det gick inte att identifiera den inloggade användaren.";
+                return RedirectToAction("Login", "Account");
+            }
+
+            var loanBelongsToUser = await LoanBelongsToLoggedInUser(id, loggedInUserId);
+
+            if (!loanBelongsToUser)
+            {
+                TempData["ErrorMessage"] = "Du har inte behörighet att hantera detta lån.";
+                return RedirectToAction("Index");
+            }
+
             var response = await _httpClient.DeleteAsync($"api/Loans/{id}");
 
             if (response.IsSuccessStatusCode)
@@ -71,6 +128,33 @@ namespace AtlasLibrary.Controllers
             }
 
             return RedirectToAction("Index");
+        }
+
+        private async Task<bool> LoanBelongsToLoggedInUser(int loanId, int loggedInUserId)
+        {
+            var response = await _httpClient.GetAsync("api/Loans");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return false;
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            var loans = JsonSerializer.Deserialize<List<ReturnViewModel>>(json,
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                }) ?? new List<ReturnViewModel>();
+
+            var loan = loans.FirstOrDefault(l => l.Id == loanId);
+
+            if (loan == null)
+            {
+                return false;
+            }
+
+            return loan.UserId == loggedInUserId;
         }
     }
 }
