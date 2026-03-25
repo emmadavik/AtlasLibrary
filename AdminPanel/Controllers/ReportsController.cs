@@ -53,7 +53,9 @@ public class ReportsController : Controller
             Title = model.Title,
             Summary = model.Summary,
             CreatedAt = DateTime.UtcNow,
-            SelectedObjectIds = string.Join(",", model.SelectedObjectIds)
+            SelectedObjectIds = model.SelectedObjectIds != null && model.SelectedObjectIds.Any()
+                ? string.Join(",", model.SelectedObjectIds)
+                : null
         };
 
         _context.Reports.Add(report);
@@ -113,7 +115,9 @@ public class ReportsController : Controller
 
         report.Title = model.Title;
         report.Summary = model.Summary;
-        report.SelectedObjectIds = string.Join(",", model.SelectedObjectIds);
+        report.SelectedObjectIds = model.SelectedObjectIds != null && model.SelectedObjectIds.Any()
+            ? string.Join(",", model.SelectedObjectIds)
+            : null;
 
         await _context.SaveChangesAsync();
 
