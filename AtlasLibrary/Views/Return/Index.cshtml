@@ -1,0 +1,105 @@
+﻿@model IEnumerable<AtlasLibrary.Models.ReturnViewModel>
+
+@{
+    ViewData["Title"] = "Återlämning";
+}
+
+<div class="return-page">
+    <div class="return-wrapper">
+        <h1 class="return-title">Återlämning</h1>
+        <p class="return-subtitle">Här kan biblioteksansvarig hantera aktiva lån och återlämningar.</p>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="return-alert return-alert-success">
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="return-alert return-alert-error">
+                @TempData["ErrorMessage"]
+            </div>
+        }
+
+        <div class="return-table-wrap">
+            <table class="return-table">
+                <thead>
+                    <tr>
+                        <th>Lån-ID</th>
+                        <th>Titel</th>
+                        <th>Användare</th>
+                        <th>Antal</th>
+                        <th>Lånedatum</th>
+                        <th>Förfallodatum</th>
+                        <th>Status</th>
+                        <th>Åtgärd</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var loan in Model)
+                        {
+                            <tr>
+                                <td>@loan.Id</td>
+                                <td>@loan.ItemTitle</td>
+                                <td>@loan.UserId</td>
+                                <td>@loan.Quantity</td>
+                                <td>@loan.LoanDate.ToShortDateString()</td>
+                                <td>@loan.DueDate.ToShortDateString()</td>
+                                <td>
+                                    @if (loan.Status == "Returned")
+                                    {
+                                        <span class="status-badge status-returned">Returned</span>
+                                    }
+                                    else if (loan.Status == "Pending")
+                                    {
+                                        <span class="status-badge status-pending">Pending</span>
+                                    }
+                                    else if (!string.IsNullOrEmpty(loan.Status))
+                                    {
+                                        <span class="status-badge status-default">@loan.Status</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-badge status-default">Unknown</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="action-group">
+                                        @if (loan.Status == "Pending")
+                                        {
+                                            <form asp-action="ConfirmReturn" asp-controller="Return" method="post">
+                                                <input type="hidden" name="id" value="@loan.Id" />
+                                                <button type="submit" class="return-btn">
+                                                    Bekräfta återlämning
+                                                </button>
+                                            </form>
+                                        }
+
+                                        <form asp-action="DeleteLoan" asp-controller="Return" method="post">
+                                            <input type="hidden" name="id" value="@loan.Id" />
+                                            <button type="submit" class="delete-btn">
+                                                Ta bort
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="empty-state">
+                                Inga lån hittades.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

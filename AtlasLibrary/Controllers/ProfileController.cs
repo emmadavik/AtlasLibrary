@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AtlasLibrary.Models;
+using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -123,6 +124,7 @@ namespace AtlasLibrary.Controllers
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new List<LoanResponse>();
             }
 
+            
             return new ProfilePageViewModel
             {
                 Profile = profile,
@@ -134,6 +136,7 @@ namespace AtlasLibrary.Controllers
         {
             public ProfileResponse Profile { get; set; } = new();
             public List<LoanResponse> Loans { get; set; } = new();
+
         }
 
         public class ProfileResponse
@@ -159,6 +162,12 @@ namespace AtlasLibrary.Controllers
             public DateTime DueDate { get; set; }
             public DateTime? ReturnedDate { get; set; }
             public string Status { get; set; } = string.Empty;
+            public string ImageUrl { get; set; } = "";
+            public string ItemTitle { get; set; } = "";
         }
+
+      
+
+
     }
 }

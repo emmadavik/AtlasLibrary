@@ -1,0 +1,214 @@
+﻿.return-page {
+    max-width: 1200px;
+    margin: 70px auto 90px auto;
+    padding: 0 24px;
+}
+
+.return-wrapper {
+    background: #e9ebe7;
+    border-radius: 28px;
+    padding: 40px 36px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+
+.return-title {
+    font-size: 3.2rem;
+    font-weight: 700;
+    color: #295943;
+    margin-bottom: 14px;
+    line-height: 1.1;
+}
+
+.return-subtitle {
+    font-size: 1.15rem;
+    color: #5a5a56;
+    margin-bottom: 30px;
+}
+
+.return-alert {
+    border-radius: 16px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    font-weight: 500;
+}
+
+.return-alert-success {
+    background-color: #dcebdd;
+    color: #295943;
+}
+
+.return-alert-error {
+    background-color: #f3d8d4;
+    color: #8f2f25;
+}
+
+.return-table-wrap {
+    background: #fdfdfb;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.03);
+}
+
+.return-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .return-table thead th {
+        color: #295943;
+        font-weight: 700;
+        font-size: 1rem;
+        padding: 20px 18px;
+        background: #f3f3ef;
+        border-bottom: 1px solid #e1e1db;
+        text-align: left;
+    }
+
+    .return-table tbody td {
+        padding: 20px 18px;
+        border-bottom: 1px solid #ecece7;
+        vertical-align: middle;
+        color: #1f1f1f;
+        font-size: 0.98rem;
+    }
+
+    .return-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .return-table tbody tr:hover {
+        background-color: #fbfbf8;
+    }
+
+.status-badge {
+    display: inline-block;
+    padding: 7px 15px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.status-returned {
+    background-color: #295943;
+    color: white;
+}
+
+.status-pending {
+    background-color: #e3bb2a;
+    color: #1f1f1f;
+}
+
+.status-default {
+    background-color: #8c949b;
+    color: white;
+}
+
+.action-group {
+    display: flex;
+    flex-direction: row; 
+    gap: 8px;
+    align-items: center;
+}
+
+.return-btn,
+.delete-btn {
+    border: none;
+    border-radius: 14px;
+    padding: 11px 18px;
+    font-size: 0.93rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    width: auto;
+}
+
+.return-btn {
+    background-color: #2f6b50;
+    color: white;
+}
+
+    .return-btn:hover {
+        background-color: #255843;
+    }
+
+.delete-btn {
+    background-color: #c04a3a;
+    color: white;
+}
+
+    .delete-btn:hover {
+        background-color: #a63d2f;
+    }
+
+.empty-state {
+    padding: 28px 10px;
+    color: #666660;
+    font-size: 1rem;
+}
+
+@media (max-width: 992px) {
+    .return-title {
+        font-size: 2.5rem;
+    }
+
+    .return-wrapper {
+        padding: 28px 22px;
+    }
+
+    .return-table thead {
+        display: none;
+    }
+
+    .return-table,
+    .return-table tbody,
+    .return-table tr,
+    .return-table td {
+        display: block;
+        width: 100%;
+    }
+
+        .return-table tbody tr {
+            background: #fff;
+            margin-bottom: 16px;
+            border-radius: 18px;
+            padding: 14px 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .return-table tbody td {
+            border: none;
+            padding: 8px 0;
+        }
+
+    .return-table-wrap {
+        background: transparent;
+        box-shadow: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .return-page {
+        margin-top: 40px;
+        padding: 0 16px;
+    }
+
+    .return-title {
+        font-size: 2rem;
+    }
+
+    .return-subtitle {
+        font-size: 1rem;
+    }
+
+    .return-btn,
+    .delete-btn {
+        width: 100%;
+    }
+
+    .action-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

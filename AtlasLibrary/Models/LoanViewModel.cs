@@ -2,7 +2,7 @@
 {
     public class LoanViewModel
     {
-        public int LoanId { get; set; }
+        public int Id { get; set; }
         public int ItemId { get; set; }
         public string? ItemTitle { get; set; }
         public int UserId { get; set; }

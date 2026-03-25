@@ -84,7 +84,7 @@
                         <table class="loans-table">
                             <thead>
                                 <tr>
-                                    <th>Item-ID</th>
+                                    <th>Titel</th>
                                     <th>Antal</th>
                                     <th>Lånedatum</th>
                                     <th>Förfallodatum</th>
@@ -95,7 +95,7 @@
                                 @foreach (var loan in Model.Loans)
                                 {
                                     <tr>
-                                        <td>@loan.ItemId</td>
+                                        <td>@loan.ItemTitle</td>
                                         <td>@loan.Quantity</td>
                                         <td>@loan.LoanDate.ToString("yyyy-MM-dd")</td>
                                         <td>@loan.DueDate.ToString("yyyy-MM-dd")</td>
