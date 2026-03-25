@@ -1,3 +1,5 @@
+using AtlasLibrary.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -5,9 +7,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 
-builder.Services.AddHttpClient("itemsApi", client =>
+builder.Services.AddHttpClient<ItemsService>((serviceProvider , httpClient) =>
 {
-    client.BaseAddress = new Uri("http://localhost:5079/");
+    //Hämta config
+    var config = serviceProvider.GetRequiredService<IConfiguration>();
+    
+    // Hämta adress till ItemsService ifrån config
+
+    string adress = config.GetValue<string>("ItemServiceAdress") ?? "";
+        
+    
+
+    httpClient.BaseAddress = new Uri(adress);
 });
 
 

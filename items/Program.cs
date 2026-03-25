@@ -18,7 +18,7 @@ builder.Services.AddHttpClient("adminApi", client =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+//if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();

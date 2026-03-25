@@ -9,6 +9,5 @@ public class ItemsDbContext : DbContext
         : base(options)
     {
     }
-    public DbSet<Item> Items { get; set; }
     public DbSet<CartItem> CartItems { get; set; }
 }
