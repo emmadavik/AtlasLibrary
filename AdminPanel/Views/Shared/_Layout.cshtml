@@ -13,13 +13,11 @@
 
     <nav class="top-nav">
         <a asp-controller="Admin" asp-action="Index">Panel</a>
-        <a href="@(Configuration["ExternalLinks:ManageObjectsUrl"] ?? "#")">Hantera Objekt</a>
+        <a href="https://atlaslibraryitemsobject-gddwfucvfuetbmbe.swedencentral-01.azurewebsites.net">Hantera Objekt</a>
         <a href="@(Configuration["ExternalLinks:ManageReservationsUrl"] ?? "#")">Hantera Reservation</a>
     </nav>
 
     <div class="header-right">
-        <a href="@(Configuration["ExternalLinks:ProfileUrl"] ?? "#")" class="top-action-btn profile-btn">Profil</a>
-        <a href="@(Configuration["ExternalLinks:LoginUrl"] ?? "#")" class="top-action-btn sign-in-btn">Logga In</a>
     </div>
 </header>
 
