@@ -1,12 +1,16 @@
 @model LibraryAdminPanel.Models.ReportFormViewModel
+
 @{
     ViewData["Title"] = "Ändra Rapport";
 }
 
 <div class="form-card">
     <h1>Ändra Rapport</h1>
+
     <form asp-action="Edit" method="post" class="simple-form">
+        @Html.AntiForgeryToken()
         <input type="hidden" asp-for="Id" />
+
         <div asp-validation-summary="ModelOnly" class="validation-text"></div>
 
         <div class="form-group">
@@ -17,20 +21,32 @@
 
         <div class="form-group">
             <label asp-for="SelectedObjectIds"></label>
-            <div class="checkbox-list">
-                @foreach (var item in Model.CompletedObjects)
-                {
-                    <label class="checkbox-item">
-                        <input type="checkbox" name="SelectedObjectIds" value="@item.Id" @(Model.SelectedObjectIds.Contains(item.Id) ? "checked" : null) />
-                        <span>@item.Title - @item.ObjectType - @item.BorrowerName</span>
-                    </label>
-                }
-            </div>
+
+            @if (Model.CompletedObjects != null && Model.CompletedObjects.Any())
+            {
+                <div class="checkbox-list">
+                    @foreach (var item in Model.CompletedObjects)
+                    {
+                        <label class="checkbox-item">
+                            <input type="checkbox"
+                                   name="SelectedObjectIds"
+                                   value="@item.Id"
+                                   @(Model.SelectedObjectIds.Contains(item.Id) ? "checked" : null) />
+                            <span>@item.Title - @item.ObjectType - @item.BorrowerName</span>
+                        </label>
+                    }
+                </div>
+            }
+            else
+            {
+                <p>Inga färdiga objekt hittades.</p>
+            }
         </div>
 
         <div class="form-group">
             <label asp-for="Summary"></label>
             <textarea asp-for="Summary" class="form-input form-textarea"></textarea>
+            <span asp-validation-for="Summary" class="validation-text"></span>
         </div>
 
         <div class="button-row">

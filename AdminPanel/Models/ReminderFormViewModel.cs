@@ -6,11 +6,10 @@ public class ReminderFormViewModel
 {
     public int Id { get; set; }
 
-    [Required]
-    [Display(Name = "Välj färdigt objekt")]
+    [Display(Name = "Valt objekt")]
     public int CompletedObjectId { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Påminnelse är obligatorisk.")]
     [Display(Name = "Påminnelse")]
     public string Message { get; set; } = string.Empty;
 

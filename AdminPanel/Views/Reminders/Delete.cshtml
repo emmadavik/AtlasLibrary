@@ -1,4 +1,5 @@
 @model LibraryAdminPanel.Models.Reminder
+
 @{
     ViewData["Title"] = "Ta bort Påminnelse";
 }
@@ -10,10 +11,13 @@
     <div class="info-list">
         <p><strong>Låntagare:</strong> @Model.BorrowerName</p>
         <p><strong>E-post:</strong> @Model.BorrowerEmail</p>
+        <p><strong>Datum:</strong> @Model.ReminderDate.ToString("yyyy-MM-dd")</p>
     </div>
 
     <form asp-action="Delete" method="post">
+        @Html.AntiForgeryToken()
         <input type="hidden" asp-for="Id" />
+
         <div class="button-row">
             <button type="submit" class="btn-danger">Ta bort</button>
             <a asp-action="Index" class="btn-secondary">Avbryt</a>
