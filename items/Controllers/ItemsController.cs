@@ -16,94 +16,92 @@ public class ItemsController : ControllerBase
         _factory = factory;
     }
 
-    [HttpGet("books")]
-    public async Task<IActionResult> GetBooks(string q = "harry potter")
+   [HttpGet("books")]
+public async Task<IActionResult> GetBooks([FromQuery] string? q = null)
+{
+    var list = new List<Item>();
+
+    var searchTerm = string.IsNullOrWhiteSpace(q) ? "harry potter" : q;
+    var url = $"https://openlibrary.org/search.json?q={Uri.EscapeDataString(searchTerm)}";
+
+    using var http = new HttpClient();
+    var response = await http.GetAsync(url);
+
+    if (response.IsSuccessStatusCode)
     {
-        var list = new List<Item>();
+        var json = await response.Content.ReadAsStringAsync();
 
-        // OpenLibrary
-        var url = $"https://openlibrary.org/search.json?q={q}";
+        using var doc = JsonDocument.Parse(json);
+        var docs = doc.RootElement.GetProperty("docs");
 
-        using var http = new HttpClient();
-        var response = await http.GetAsync(url);
-
-        if (response.IsSuccessStatusCode)
+        foreach (var d in docs.EnumerateArray().Take(10))
         {
-            var json = await response.Content.ReadAsStringAsync();
+            var title = d.GetProperty("title").GetString() ?? "";
+            var author = "";
+            var imageUrl = "";
+            var itemId = 0;
 
-            using var doc = JsonDocument.Parse(json);
-            var docs = doc.RootElement.GetProperty("docs");
-
-            foreach (var d in docs.EnumerateArray().Take(10))
+            if (d.TryGetProperty("author_name", out var authorProp) && authorProp.GetArrayLength() > 0)
             {
-                var title = d.GetProperty("title").GetString() ?? "";
-                var author = "";
-                var imageUrl = "";
-                var itemId = 0;
-
-                if (d.TryGetProperty("author_name", out var authorProp) && authorProp.GetArrayLength() > 0)
-                {
-                    author = authorProp[0].GetString() ?? "";
-                }
-
-                if (d.TryGetProperty("cover_i", out var coverProp))
-                {
-                    itemId = coverProp.GetInt32();
-                    imageUrl = $"https://covers.openlibrary.org/b/id/{itemId}-M.jpg";
-                }
-
-                if (itemId == 0)
-                {
-                    itemId = Math.Abs($"{title}-{author}".GetHashCode());
-                }
-
-                list.Add(new Item
-                {
-                    Id = itemId,
-                    Title = title,
-                    Author = author,
-                    Description = "Ingen beskrivning tillgänglig",
-                    Type = "Book",
-                    IsAvailable = true,
-                    ImageUrl = imageUrl
-                });
+                author = authorProp[0].GetString() ?? "";
             }
-        }
 
-        // Farnams API
-        try
-        {
-            var client = _factory.CreateClient("adminApi");
-
-            var adminItems = await client.GetFromJsonAsync<List<Item>>("api/items")
-                             ?? new List<Item>();
-
-            var adminBooks = adminItems
-                .Where(x => !string.IsNullOrWhiteSpace(x.Type) &&
-                            (x.Type.Equals("Book", StringComparison.OrdinalIgnoreCase) ||
-                             x.Type.Equals("Bok", StringComparison.OrdinalIgnoreCase)))
-                .ToList();
-
-            var mappedAdminBooks = adminBooks.Select(x => new Item
+            if (d.TryGetProperty("cover_i", out var coverProp))
             {
-                Id = 100000 + x.Id,
-                Title = x.Title,
-                Author = x.Author,
-                Description = x.Description,
-                Type = x.Type,
-                IsAvailable = x.IsAvailable,
-                ImageUrl = x.ImageUrl ?? ""
-            }).ToList();
+                itemId = coverProp.GetInt32();
+                imageUrl = $"https://covers.openlibrary.org/b/id/{itemId}-M.jpg";
+            }
 
-            list.AddRange(mappedAdminBooks);
-        }
-        catch
-        {
-            // Ignorera om hans API inte svarar
-        }
+            if (itemId == 0)
+            {
+                itemId = Math.Abs($"{title}-{author}".GetHashCode());
+            }
 
-        return Ok(list);
+            list.Add(new Item
+            {
+                Id = itemId,
+                Title = title,
+                Author = author,
+                Description = "Ingen beskrivning tillgänglig",
+                Type = "Book",
+                IsAvailable = true,
+                ImageUrl = imageUrl
+            });
+        }
     }
+
+    try
+    {
+        var client = _factory.CreateClient("adminApi");
+
+        var adminItems = await client.GetFromJsonAsync<List<Item>>("api/items")
+                         ?? new List<Item>();
+
+        var adminBooks = adminItems
+            .Where(x => !string.IsNullOrWhiteSpace(x.Type) &&
+                        (x.Type.Equals("Book", StringComparison.OrdinalIgnoreCase) ||
+                         x.Type.Equals("Bok", StringComparison.OrdinalIgnoreCase)))
+            .ToList();
+
+        var mappedAdminBooks = adminBooks.Select(x => new Item
+        {
+            Id = 100000 + x.Id,
+            Title = x.Title,
+            Author = x.Author,
+            Description = x.Description,
+            Type = x.Type,
+            IsAvailable = x.IsAvailable,
+            ImageUrl = x.ImageUrl ?? ""
+        }).ToList();
+
+        list.AddRange(mappedAdminBooks);
+    }
+    catch
+    {
+    }
+
+    return Ok(list);
+}
 
     [HttpGet("equipment")]
     public async Task<IActionResult> GetEquipment()

@@ -28,7 +28,7 @@ builder.Services.AddHttpClient("equipmentItemsApi", client =>
 builder.Services.AddHttpClient("ItemsService", (serviceProvider, httpClient) =>
 {
     var config = serviceProvider.GetRequiredService<IConfiguration>();
-    string? adress = config.GetValue<string>("ItemServiceAdress");
+    string? adress = config.GetValue<string>("ApiSettings:ItemServiceAdress");
 
     if (string.IsNullOrWhiteSpace(adress))
     {
@@ -37,6 +37,8 @@ builder.Services.AddHttpClient("ItemsService", (serviceProvider, httpClient) =>
 
     httpClient.BaseAddress = new Uri(adress);
 });
+
+builder.Services.AddScoped<ItemsService>();
 
 // Session
 builder.Services.AddDistributedMemoryCache();
