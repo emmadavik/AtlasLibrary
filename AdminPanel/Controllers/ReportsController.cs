@@ -20,13 +20,13 @@ public class ReportsController : Controller
     public async Task<IActionResult> Index()
     {
         var reports = await _context.Reports
-            .Include(report => report.SelectedObjects)
-            .OrderByDescending(report => report.CreatedAt)
+            .OrderByDescending(r => r.CreatedAt)
             .ToListAsync();
 
         return View(reports);
     }
 
+    [HttpGet]
     public async Task<IActionResult> Create()
     {
         var viewModel = new ReportFormViewModel
@@ -39,34 +39,21 @@ public class ReportsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(ReportFormViewModel viewModel)
+    public async Task<IActionResult> Create(ReportFormViewModel model)
     {
-        viewModel.CompletedObjects = await _externalObjectApiService.GetCompletedObjectsAsync();
-
-        if (viewModel.SelectedObjectIds == null || !viewModel.SelectedObjectIds.Any())
-        {
-            ModelState.AddModelError(string.Empty, "Välj minst ett objekt till rapporten.");
-        }
+        model.CompletedObjects = await _externalObjectApiService.GetCompletedObjectsAsync();
 
         if (!ModelState.IsValid)
         {
-            return View(viewModel);
-        }
-
-        var selectedObjects = CreateReportItems(viewModel.CompletedObjects, viewModel.SelectedObjectIds);
-
-        if (!selectedObjects.Any())
-        {
-            ModelState.AddModelError(string.Empty, "De valda objekten kunde inte hämtas från API:t.");
-            return View(viewModel);
+            return View(model);
         }
 
         var report = new Report
         {
-            Title = viewModel.Title,
-            Summary = viewModel.Summary,
-            CreatedAt = DateTime.Now,
-            SelectedObjects = selectedObjects
+            Title = model.Title,
+            Summary = model.Summary,
+            CreatedAt = DateTime.UtcNow,
+            SelectedObjectIds = string.Join(",", model.SelectedObjectIds)
         };
 
         _context.Reports.Add(report);
@@ -75,15 +62,24 @@ public class ReportsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
     public async Task<IActionResult> Edit(int id)
     {
-        var report = await _context.Reports
-            .Include(currentReport => currentReport.SelectedObjects)
-            .FirstOrDefaultAsync(currentReport => currentReport.Id == id);
-
+        var report = await _context.Reports.FirstOrDefaultAsync(r => r.Id == id);
         if (report == null)
         {
             return NotFound();
+        }
+
+        var selectedIds = new List<int>();
+
+        if (!string.IsNullOrWhiteSpace(report.SelectedObjectIds))
+        {
+            selectedIds = report.SelectedObjectIds
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(idText => int.TryParse(idText, out var parsedId) ? parsedId : 0)
+                .Where(parsedId => parsedId != 0)
+                .ToList();
         }
 
         var viewModel = new ReportFormViewModel
@@ -91,7 +87,7 @@ public class ReportsController : Controller
             Id = report.Id,
             Title = report.Title,
             Summary = report.Summary,
-            SelectedObjectIds = report.SelectedObjects.Select(item => item.CompletedObjectId).ToList(),
+            SelectedObjectIds = selectedIds,
             CompletedObjects = await _externalObjectApiService.GetCompletedObjectsAsync()
         };
 
@@ -100,54 +96,34 @@ public class ReportsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(ReportFormViewModel viewModel)
+    public async Task<IActionResult> Edit(ReportFormViewModel model)
     {
-        viewModel.CompletedObjects = await _externalObjectApiService.GetCompletedObjectsAsync();
-
-        if (viewModel.SelectedObjectIds == null || !viewModel.SelectedObjectIds.Any())
-        {
-            ModelState.AddModelError(string.Empty, "Välj minst ett objekt till rapporten.");
-        }
+        model.CompletedObjects = await _externalObjectApiService.GetCompletedObjectsAsync();
 
         if (!ModelState.IsValid)
         {
-            return View(viewModel);
+            return View(model);
         }
 
-        var report = await _context.Reports
-            .Include(currentReport => currentReport.SelectedObjects)
-            .FirstOrDefaultAsync(currentReport => currentReport.Id == viewModel.Id);
-
+        var report = await _context.Reports.FirstOrDefaultAsync(r => r.Id == model.Id);
         if (report == null)
         {
             return NotFound();
         }
 
-        var newItems = CreateReportItems(viewModel.CompletedObjects, viewModel.SelectedObjectIds);
-
-        if (!newItems.Any())
-        {
-            ModelState.AddModelError(string.Empty, "De valda objekten kunde inte hämtas från API:t.");
-            return View(viewModel);
-        }
-
-        report.Title = viewModel.Title;
-        report.Summary = viewModel.Summary;
-
-        _context.ReportObjectItems.RemoveRange(report.SelectedObjects);
-        report.SelectedObjects = newItems;
+        report.Title = model.Title;
+        report.Summary = model.Summary;
+        report.SelectedObjectIds = string.Join(",", model.SelectedObjectIds);
 
         await _context.SaveChangesAsync();
 
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
     public async Task<IActionResult> Delete(int id)
     {
-        var report = await _context.Reports
-            .Include(currentReport => currentReport.SelectedObjects)
-            .FirstOrDefaultAsync(currentReport => currentReport.Id == id);
-
+        var report = await _context.Reports.FirstOrDefaultAsync(r => r.Id == id);
         if (report == null)
         {
             return NotFound();
@@ -160,10 +136,7 @@ public class ReportsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        var report = await _context.Reports
-            .Include(currentReport => currentReport.SelectedObjects)
-            .FirstOrDefaultAsync(currentReport => currentReport.Id == id);
-
+        var report = await _context.Reports.FirstOrDefaultAsync(r => r.Id == id);
         if (report != null)
         {
             _context.Reports.Remove(report);
@@ -171,20 +144,5 @@ public class ReportsController : Controller
         }
 
         return RedirectToAction(nameof(Index));
-    }
-
-    private static List<ReportObjectItem> CreateReportItems(List<CompletedObject> completedObjects, List<int> selectedObjectIds)
-    {
-        return completedObjects
-            .Where(item => selectedObjectIds.Contains(item.Id))
-            .Select(item => new ReportObjectItem
-            {
-                CompletedObjectId = item.Id,
-                Title = item.Title,
-                ObjectType = item.ObjectType,
-                BorrowerName = item.BorrowerName,
-                BorrowerEmail = item.BorrowerEmail
-            })
-            .ToList();
     }
 }

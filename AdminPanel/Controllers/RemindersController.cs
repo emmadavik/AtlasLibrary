@@ -26,6 +26,7 @@ public class RemindersController : Controller
         return View(reminders);
     }
 
+    [HttpGet]
     public async Task<IActionResult> Create()
     {
         var viewModel = new ReminderFormViewModel
@@ -70,6 +71,7 @@ public class RemindersController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
     public async Task<IActionResult> Edit(int id)
     {
         var reminder = await _context.Reminders.FirstOrDefaultAsync(currentReminder => currentReminder.Id == id);
@@ -126,6 +128,7 @@ public class RemindersController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpGet]
     public async Task<IActionResult> Delete(int id)
     {
         var reminder = await _context.Reminders.FirstOrDefaultAsync(currentReminder => currentReminder.Id == id);

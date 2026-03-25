@@ -1,45 +1,45 @@
 @model List<LibraryAdminPanel.Models.Report>
+
 @{
     ViewData["Title"] = "Rapporter";
 }
 
-<div class="page-header-row">
-    <div>
-        <h1>Rapporter</h1>
-        <p class="sub-text">Här ser du alla skapade rapporter.</p>
-    </div>
-    <a class="btn-primary" asp-action="Create">Skapa ny Rapport</a>
-</div>
+<div class="form-card">
+    <h1>Rapporter</h1>
 
-@if (!Model.Any())
-{
-    <div class="empty-card">
-        <p>Inga rapporter finns ännu.</p>
-    </div>
-}
-else
-{
-    <div class="table-card">
-        <table class="simple-table">
+    @if (!Model.Any())
+    {
+        <p>Inga rapporter skapade ännu.</p>
+    }
+    else
+    {
+        <table class="table">
             <thead>
             <tr>
-                <th>Rapportnamn</th>
-                <th>Antal objekt</th>
+                <th>Titel</th>
+                <th>Sammanfattning</th>
                 <th>Valda objekt</th>
-                <th>Datum</th>
+                <th>Skapad</th>
                 <th>Åtgärder</th>
             </tr>
             </thead>
             <tbody>
             @foreach (var report in Model)
             {
+                var selectedCount = 0;
+
+                if (!string.IsNullOrWhiteSpace(report.SelectedObjectIds))
+                {
+                    selectedCount = report.SelectedObjectIds
+                        .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                        .Length;
+                }
+
                 <tr>
                     <td>@report.Title</td>
-                    <td>@report.ObjectCount</td>
-                    <td>
-                        @string.Join(", ", report.SelectedObjects.Select(x => x.Title))
-                    </td>
-                    <td>@report.CreatedAt.ToString("yyyy-MM-dd")</td>
+                    <td>@report.Summary</td>
+                    <td>@selectedCount</td>
+                    <td>@report.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
                     <td class="action-cell">
                         <a class="text-link" asp-action="Edit" asp-route-id="@report.Id">Ändra</a>
                         <a class="text-link delete-link" asp-action="Delete" asp-route-id="@report.Id">Ta bort</a>
@@ -48,5 +48,9 @@ else
             }
             </tbody>
         </table>
+    }
+
+    <div class="button-row" style="margin-top: 20px;">
+        <a asp-action="Create" class="btn-primary">Skapa ny rapport</a>
     </div>
-}
+</div>

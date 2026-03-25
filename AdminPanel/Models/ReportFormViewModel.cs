@@ -6,7 +6,7 @@ public class ReportFormViewModel
 {
     public int Id { get; set; }
 
-    [Required]
+    [Required(ErrorMessage = "Titel är obligatorisk.")]
     [Display(Name = "Rapportnamn")]
     public string Title { get; set; } = string.Empty;
 
