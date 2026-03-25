@@ -11,7 +11,7 @@ namespace AtlasLibrary.Controllers
         //private readonly HttpClient _loansClient;
         //private readonly HttpClient _itemsClient;
         private readonly HttpClient _loansClient;
-        private readonly HttpClient _bookItemsClient;
+        private readonly HttpClient _ItemsClient;
         private readonly HttpClient _equipmentItemsClient;
 
         public LoansPageController(IHttpClientFactory factory)
@@ -24,7 +24,7 @@ namespace AtlasLibrary.Controllers
             _loansClient = new HttpClient();
             _loansClient.BaseAddress = new Uri("https://localhost:7024/");
 
-            _bookItemsClient = factory.CreateClient("itemsApi");
+            _ItemsClient = factory.CreateClient("itemsApi");
             _equipmentItemsClient = factory.CreateClient("equipmentItemsApi");
 
         }
@@ -34,7 +34,7 @@ namespace AtlasLibrary.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var cart = await _itemsClient.GetFromJsonAsync<List<CartItemViewModel>>("api/Cart")
+            var cart = await _ItemsClient.GetFromJsonAsync<List<CartItemViewModel>>("api/Cart")
                        ?? new List<CartItemViewModel>();
 
             if (!cart.Any())
@@ -55,7 +55,7 @@ namespace AtlasLibrary.Controllers
             foreach (var cartItem in cart)
             {
                 
-                var itemResponse = await _itemsClient.GetAsync($"api/Items/{cartItem.ItemId}");
+                var itemResponse = await _ItemsClient.GetAsync($"api/Items/{cartItem.ItemId}");
 
                 if (itemResponse.IsSuccessStatusCode)
                 {
@@ -82,14 +82,14 @@ namespace AtlasLibrary.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var cartFallback = await _itemsClient.GetFromJsonAsync<List<CartItemViewModel>>("api/Cart")
+                var cartFallback = await _ItemsClient.GetFromJsonAsync<List<CartItemViewModel>>("api/Cart")
                                    ?? new List<CartItemViewModel>();
 
                 model.CartItems = cartFallback;
                 return View(model);
             }
 
-            var cart = await _itemsClient.GetFromJsonAsync<List<CartItemViewModel>>("api/Cart")
+            var cart = await _ItemsClient.GetFromJsonAsync<List<CartItemViewModel>>("api/Cart")
                        ?? new List<CartItemViewModel>();
 
             if (!cart.Any())
@@ -127,7 +127,7 @@ namespace AtlasLibrary.Controllers
 
             foreach (var cartItem in cart)
             {
-                await _itemsClient.DeleteAsync($"api/Cart/{cartItem.Id}");
+                await _ItemsClient.DeleteAsync($"api/Cart/{cartItem.Id}");
             }
 
             TempData["SuccessMessage"] = "Lånen skapades!";
