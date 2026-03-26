@@ -25,7 +25,7 @@
                             <a class="nav-link" asp-controller="AdminItems" asp-action="Index">Items</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Loans" asp-action="Index">Loans</a>
+                            <a class="nav-link" asp-controller="LoansPage" asp-action="MyLoans">Loans</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Reservations" asp-action="Index">Reservations</a>
@@ -36,7 +36,8 @@
                     </ul>
 
                     <div class="d-flex gap-2">
-                        <a class="btn btn-light profile-btn" href="#">Profile</a>
+                        <a class="btn btn-light cart-btn" asp-controller="Cart" asp-action="Index">Kundkorg</a>
+                        <a class="btn btn-light profile-btn" asp-controller="Profile" asp-action="Index">Profile</a>
                         <a class="btn login-btn" href="#">Log In</a>
                     </div>
                 </div>
