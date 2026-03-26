@@ -1,0 +1,56 @@
+@model AtlasLibrary.Controllers.AdvancedAdminController.EditReminderViewModel
+
+@{
+    ViewData["Title"] = "Redigera påminnelse";
+}
+
+<div class="page-wrapper">
+    <div class="top-navigation" style="margin-bottom: 22px;">
+        <a asp-controller="AdvancedAdmin" asp-action="Reminders" class="top-action-btn profile-btn text-decoration-none">
+            ← Tillbaka till påminnelser
+        </a>
+    </div>
+
+    <div class="form-card">
+        <h1>Redigera påminnelse</h1>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="warning-box">
+                @ViewBag.Error
+            </div>
+        }
+
+        <form asp-action="EditReminder" method="post" class="simple-form">
+            <input asp-for="Id" type="hidden" />
+
+            <div class="form-group">
+                <label asp-for="CompletedObjectId">Välj objekt</label>
+                <select asp-for="CompletedObjectId" class="form-input">
+                    <option value="">Välj objekt</option>
+                    @foreach (var item in Model.CompletedObjects)
+                    {
+                        <option value="@item.Id">
+                            @item.Title - @item.ObjectType - @item.BorrowerName
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Message">Meddelande</label>
+                <textarea asp-for="Message" class="form-input form-textarea"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ReminderDate">Datum</label>
+                <input asp-for="ReminderDate" class="form-input" type="date" />
+            </div>
+
+            <div class="button-row">
+                <button type="submit" class="btn-primary">Spara ändringar</button>
+                <a asp-action="Reminders" class="btn-secondary text-decoration-none">Tillbaka</a>
+            </div>
+        </form>
+    </div>
+</div>

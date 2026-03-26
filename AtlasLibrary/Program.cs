@@ -28,13 +28,14 @@ builder.Services.AddHttpClient("AdminApi", client =>
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 
-
+// HttpClient för gamla/fasta items-API:t
 builder.Services.AddHttpClient("equipmentItemsApi", client =>
 {
     client.BaseAddress = new Uri("https://atlaslibraryitemsobject-gddwfucvfuetbmbe.swedencentral-01.azurewebsites.net/");
 });
 
-builder.Services.AddHttpClient("ItemsService", (serviceProvider, httpClient) =>
+// Typed client för ItemsService via appsettings
+builder.Services.AddHttpClient<ItemsService>((serviceProvider, httpClient) =>
 {
     var config = serviceProvider.GetRequiredService<IConfiguration>();
     string? adress = config.GetValue<string>("ApiSettings:ItemServiceAdress");
@@ -47,22 +48,8 @@ builder.Services.AddHttpClient("ItemsService", (serviceProvider, httpClient) =>
     httpClient.BaseAddress = new Uri(adress);
 });
 
-builder.Services.AddScoped<ItemsService>();
+var app = builder.Build();
 
-    // Hämta adress till ItemsService ifrån config
-    string adress = config.GetValue<string>("ApiSettings:ItemServiceAdress") ?? "";
-// Session
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession();
-
-
-builder.Services.AddHttpClient("EquipmentItemsApi", client =>
-{
-    client.BaseAddress = new Uri("https://localhost:xxxx/"); 
-builder.Services.AddHttpClient("EquipmentItemsApi", client =>
-{
-    client.BaseAddress = new Uri("https://localhost:xxxx/");
-});
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

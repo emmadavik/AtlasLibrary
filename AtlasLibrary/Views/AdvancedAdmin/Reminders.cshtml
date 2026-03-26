@@ -24,6 +24,16 @@
             </a>
         </div>
 
+        @if (TempData["Success"] != null)
+        {
+            <div class="warning-box">@TempData["Success"]</div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="warning-box">@TempData["Error"]</div>
+        }
+
         @if (ViewBag.Error != null)
         {
             <div class="warning-box">
@@ -43,6 +53,7 @@
                             <th>E-post</th>
                             <th>Meddelande</th>
                             <th>Datum</th>
+                            <th>Åtgärder</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -55,6 +66,17 @@
                                 <td>@reminder.BorrowerEmail</td>
                                 <td>@reminder.Message</td>
                                 <td>@reminder.ReminderDate.ToString("yyyy-MM-dd")</td>
+                                <td class="action-cell">
+                                    <a asp-controller="AdvancedAdmin" asp-action="EditReminder" asp-route-id="@reminder.Id" class="text-link">
+                                        Redigera
+                                    </a>
+
+                                    <form asp-controller="AdvancedAdmin" asp-action="DeleteReminder" asp-route-id="@reminder.Id" method="post" style="display:inline;">
+                                        <button type="submit" class="text-link delete-link" onclick="return confirm('Är du säker på att du vill ta bort påminnelsen?')">
+                                            Ta bort
+                                        </button>
+                                    </form>
+                                </td>
                             </tr>
                         }
                     </tbody>
