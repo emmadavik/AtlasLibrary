@@ -106,7 +106,7 @@ public async Task<IActionResult> GetBooks([FromQuery] string? q = null)
 
     try
     {
-        var client = _factory.CreateClient("itemsApi");
+        var client = _factory.CreateClient("adminApi");
 
         var adminItems = await client.GetFromJsonAsync<List<Item>>("api/items")
                          ?? new List<Item>();
@@ -132,7 +132,7 @@ public async Task<IActionResult> GetBooks([FromQuery] string? q = null)
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"itemsApi fel: {ex.Message}");
+        Console.WriteLine($"adminApi fel: {ex.Message}");
     }
 
     return Ok(list);
@@ -142,7 +142,7 @@ public async Task<IActionResult> GetBooks([FromQuery] string? q = null)
     {
         try
         {
-            var client = _factory.CreateClient("itemsApi");
+            var client = _factory.CreateClient("adminApi");
 
             var adminItems = await client.GetFromJsonAsync<List<Item>>("api/items")
                              ?? new List<Item>();
@@ -166,7 +166,7 @@ public async Task<IActionResult> GetBooks([FromQuery] string? q = null)
     {
         try
         {
-            var client = _factory.CreateClient("itemsApi");
+            var client = _factory.CreateClient("adminApi");
 
             var adminItems = await client.GetFromJsonAsync<List<Item>>("api/items")
                              ?? new List<Item>();

@@ -11,7 +11,7 @@ builder.Services.AddDbContext<ItemsDbContext>(options =>
 
 builder.Services.AddOpenApi();
 
-builder.Services.AddHttpClient("itemsApi", client =>
+builder.Services.AddHttpClient("adminApi", client =>
 {
     client.BaseAddress = new Uri("https://atlaslibraryitemsobject-gddwfucvfuetbmbe.swedencentral-01.azurewebsites.net/");
 });
