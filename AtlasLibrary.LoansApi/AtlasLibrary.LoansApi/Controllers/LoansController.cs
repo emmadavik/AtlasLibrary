@@ -2,9 +2,6 @@
 using AtlasLibrary.LoansApi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Net.Http;
-using System.Text.Json;
 
 namespace AtlasLibrary.LoansApi.Controllers
 {
@@ -24,7 +21,7 @@ namespace AtlasLibrary.LoansApi.Controllers
         {
             return await _context.Loans.ToListAsync();
         }
-        
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Loan>> GetLoan(int id)
         {
@@ -46,7 +43,6 @@ namespace AtlasLibrary.LoansApi.Controllers
 
             return CreatedAtAction(nameof(GetLoan), new { id = loan.Id }, loan);
         }
-
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateLoan(int id, Loan updatedLoan)
@@ -90,8 +86,6 @@ namespace AtlasLibrary.LoansApi.Controllers
 
             return NoContent();
         }
-
-        
 
         [HttpPut("{id}/request-return")]
         public async Task<IActionResult> RequestReturn(int id)
@@ -193,10 +187,11 @@ namespace AtlasLibrary.LoansApi.Controllers
                 .Select(l => new AdminLoanReportItemDto
                 {
                     Id = l.Id,
-                    Title = $"Bok #{l.ItemId}",
+                    UserId = l.UserId,
+                    Title = string.IsNullOrWhiteSpace(l.ItemTitle) ? $"Bok #{l.ItemId}" : l.ItemTitle,
                     ObjectType = "Book",
-                    BorrowerName = $"User {l.UserId}",
-                    BorrowerEmail = $"user{l.UserId}@atlaslibrary.se",
+                    BorrowerName = "",
+                    BorrowerEmail = "",
                     BorrowedDate = l.LoanDate,
                     ReturnedDate = l.ReturnedDate,
                     Status = l.Status,
@@ -206,7 +201,5 @@ namespace AtlasLibrary.LoansApi.Controllers
 
             return Ok(result);
         }
-
-
     }
 }

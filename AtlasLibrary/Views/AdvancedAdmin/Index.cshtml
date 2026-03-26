@@ -1,0 +1,110 @@
+﻿@{
+    ViewData["Title"] = "Avancerade adminfunktioner";
+    var reports = ViewBag.Reports as IEnumerable<dynamic>;
+}
+
+<div class="page-wrapper">
+    <div class="top-navigation" style="margin-bottom: 22px;">
+        <a asp-controller="Profile" asp-action="Index" class="top-action-btn profile-btn text-decoration-none">
+            ← Tillbaka till profil
+        </a>
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="admin-card">
+            <h1>Avancerade adminfunktioner</h1>
+            <p class="sub-text">Här visas data från admin-API:t.</p>
+
+            <div class="warning-box">
+                @ViewBag.Error
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="hero-card">
+            <p class="eyebrow">Adminpanel</p>
+            <h1>Rapporter och påminnelser</h1>
+            <p class="hero-text">
+                Här får du en överblick över rapporter och påminnelser i systemet.
+            </p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="small-card">
+                <span class="stat-number">@ViewBag.ReportCount</span>
+                <p class="stat-label">Skapade rapporter</p>
+            </div>
+
+            <div class="small-card">
+                <span class="stat-number">@ViewBag.ReminderCount</span>
+                <p class="stat-label">Skapade påminnelser</p>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="admin-card">
+                <h2>Rapporter</h2>
+                <p class="sub-text">Skapa rapporter och visa tidigare rapporter i systemet.</p>
+
+                <div class="button-row">
+                    <a asp-controller="AdvancedAdmin" asp-action="CreateReport" class="btn-primary text-decoration-none">Skapa ny rapport</a>
+                    <a asp-controller="AdvancedAdmin" asp-action="Reports" class="btn-secondary text-decoration-none">Visa rapporter</a>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <h2>Påminnelser</h2>
+                <p class="sub-text">Skapa påminnelser och visa tidigare påminnelser i systemet.</p>
+
+                <div class="button-row">
+                    <a asp-controller="AdvancedAdmin" asp-action="CreateReminder" class="btn-primary text-decoration-none">Skapa ny påminnelse</a>
+                    <a asp-controller="AdvancedAdmin" asp-action="Reminders" class="btn-secondary text-decoration-none">Visa påminnelser</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-card">
+            <div class="page-header-row">
+                <div>
+                    <p class="eyebrow">Översikt</p>
+                    <h2>Senaste rapporter</h2>
+                </div>
+            </div>
+
+            @if (reports != null && reports.Any())
+            {
+                <div class="table-responsive">
+                    <table class="simple-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Titel</th>
+                                <th>Sammanfattning</th>
+                                <th>Skapad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var report in reports)
+                            {
+                                <tr>
+                                    <td>@report.Id</td>
+                                    <td>@report.Title</td>
+                                    <td>@report.Summary</td>
+                                    <td>@report.CreatedAt.ToString("yyyy-MM-dd")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="empty-card">
+                    <p>Det finns inga rapporter ännu.</p>
+                </div>
+            }
+        </div>
+    }
+</div>
