@@ -111,12 +111,15 @@
     align-items: center;
 }
 
-.return-btn,
-.delete-btn {
+.return-btn-sm,
+.delete-btn-sm {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     border: none;
-    border-radius: 14px;
-    padding: 11px 18px;
-    font-size: 0.93rem;
+    padding: 4px 10px;
+    font-size: 12px;
+    border-radius: 20px;
     font-weight: 600;
     cursor: pointer;
     transition: 0.2s ease;
@@ -124,21 +127,22 @@
     width: auto;
 }
 
-.return-btn {
+.return-btn-sm {
     background-color: #2f6b50;
     color: white;
+    white-space: nowrap;
 }
 
-    .return-btn:hover {
+    .return-btn-sm:hover {
         background-color: #255843;
     }
 
-.delete-btn {
+.delete-btn-sm {
     background-color: #c04a3a;
     color: white;
 }
 
-    .delete-btn:hover {
+    .delete-btn-sm:hover {
         background-color: #a63d2f;
     }
 

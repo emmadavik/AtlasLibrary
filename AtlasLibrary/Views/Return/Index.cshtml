@@ -1,12 +1,12 @@
 ﻿@model IEnumerable<AtlasLibrary.Models.ReturnViewModel>
 
 @{
-    ViewData["Title"] = "Återlämning";
+    ViewData["Title"] = "Hantera bokning";
 }
 
 <div class="return-page">
     <div class="return-wrapper">
-        <h1 class="return-title">Återlämning</h1>
+        <h1 class="return-title">Hantera bokning</h1>
         <p class="return-subtitle">Här kan biblioteksansvarig hantera aktiva lån och återlämningar.</p>
 
         @if (TempData["SuccessMessage"] != null)
@@ -52,11 +52,11 @@
                                 <td>
                                     @if (loan.Status == "Returned")
                                     {
-                                        <span class="status-badge status-returned">Returned</span>
+                                        <span class="status-badge status-returned">Återlämnad</span>
                                     }
                                     else if (loan.Status == "Pending")
                                     {
-                                        <span class="status-badge status-pending">Pending</span>
+                                        <span class="status-badge status-pending">Utlånad</span>
                                     }
                                     else if (!string.IsNullOrEmpty(loan.Status))
                                     {
@@ -73,7 +73,7 @@
                                         {
                                             <form asp-action="ConfirmReturn" asp-controller="Return" method="post">
                                                 <input type="hidden" name="id" value="@loan.Id" />
-                                                <button type="submit" class="return-btn">
+                                                <button type="submit" class="return-btn-sm">
                                                     Bekräfta återlämning
                                                 </button>
                                             </form>
@@ -81,7 +81,7 @@
 
                                         <form asp-action="DeleteLoan" asp-controller="Return" method="post">
                                             <input type="hidden" name="id" value="@loan.Id" />
-                                            <button type="submit" class="delete-btn">
+                                            <button type="submit" class="delete-btn-sm">
                                                 Ta bort
                                             </button>
                                         </form>

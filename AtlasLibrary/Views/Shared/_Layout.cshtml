@@ -40,13 +40,15 @@
                                 <a class="nav-link" asp-controller="Home" asp-action="About">About</a>
                             </li>
 
+
                             @if (!string.IsNullOrEmpty(token))
                             {
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Return" asp-action="Index">Återlämning</a>
+                                    <a class="nav-link" asp-controller="Return" asp-action="Index">Hantera Bokning</a>
                                 </li>
                             }
                         </ul>
+
 
                         <div class="d-flex gap-2">
                             <a asp-controller="Cart" asp-action="Index" class="cart-link">

@@ -51,7 +51,7 @@ namespace AtlasLibrary.LoansApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Loans");
+                    b.ToTable("Loans", (string)null);
                 });
 #pragma warning restore 612, 618
         }

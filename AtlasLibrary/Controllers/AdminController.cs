@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
+
 namespace AtlasLibrary.Controllers
 {
     public class AdminController : Controller
@@ -254,6 +255,8 @@ namespace AtlasLibrary.Controllers
 
             return user?.Id;
         }
+
+       
 
         public class InloggadAnvandareViewModel
         {

@@ -192,3 +192,30 @@ footer,
     .cart-link:hover {
         color: #2f7d4f;
     }
+
+
+.loan-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.loan-title {
+    color: #2f6b50; /* samma gröna som återlämning */
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.loan-card {
+    background: #f8f9f8;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.confirm-btn-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}

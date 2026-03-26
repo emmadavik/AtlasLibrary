@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
-using System.Net.Http.Headers;
+using System.Text.Json.Serialization;
+
 
 namespace AtlasLibrary.LoansApi.Controllers
 {
@@ -231,10 +233,10 @@ namespace AtlasLibrary.LoansApi.Controllers
                     return new AdminLoanReportItemDto
                     {
                         Id = l.Id,
-                        Title = $"Bok #{l.ItemId}",
-                        ObjectType = "Book",
+                        Title = l.ItemTitle,
+                        ObjectType = GetObjectType(l.ItemTitle),
                         BorrowerName = user?.Namn ?? $"User {l.UserId}",
-                        BorrowerEmail = user?.Epost ?? $"user{l.UserId}@atlaslibrary.se",
+                        BorrowerEmail = user?.Epost ?? "",
                         BorrowedDate = l.LoanDate,
                         ReturnedDate = l.ReturnedDate,
                         Status = l.Status,
@@ -246,11 +248,36 @@ namespace AtlasLibrary.LoansApi.Controllers
             return Ok(result);
         }
 
+
+
+
         private class UserDto
         {
+            [JsonPropertyName("id")]
             public int Id { get; set; }
+
+            [JsonPropertyName("namn")]
             public string Namn { get; set; } = string.Empty;
+
+            [JsonPropertyName("epost")]
             public string Epost { get; set; } = string.Empty;
+        }
+
+
+
+        private string GetObjectType(string itemTitle)
+        {
+            if (string.IsNullOrWhiteSpace(itemTitle))
+                return "Unknown";
+
+            if (itemTitle.Contains("rapport", StringComparison.OrdinalIgnoreCase))
+                return "Report";
+
+            if (itemTitle.Contains("laddare", StringComparison.OrdinalIgnoreCase) ||
+                itemTitle.Contains("utrustning", StringComparison.OrdinalIgnoreCase))
+                return "Equipment";
+
+            return "Book";
         }
     }
 }
