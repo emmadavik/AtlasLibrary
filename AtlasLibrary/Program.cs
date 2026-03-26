@@ -61,7 +61,7 @@ builder.Services.AddHttpClient("EquipmentItemsApi", client =>
     client.BaseAddress = new Uri("https://localhost:xxxx/");
 });
 
-var app = builder.Build();
+//var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
