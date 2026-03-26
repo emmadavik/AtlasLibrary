@@ -29,6 +29,10 @@ namespace AtlasLibrary.LoansApi.Migrations
                     b.Property<int>("ItemId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("ItemTitle")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("LoanDate")
                         .HasColumnType("TEXT");
 

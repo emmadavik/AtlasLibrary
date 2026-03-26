@@ -1,0 +1,49 @@
+@model List<LibraryAdminPanel.Models.Reminder>
+
+@{
+    ViewData["Title"] = "Påminnelser";
+}
+
+<div class="page-header-row">
+    <div>
+        <h1>Påminnelser</h1>
+        <p class="sub-text">Här ser du alla skapade påminnelser.</p>
+    </div>
+    <a class="btn-primary" asp-action="Create">Skapa ny påminnelse</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty-card">
+        <p>Inga påminnelser finns ännu.</p>
+    </div>
+}
+else
+{
+    <div class="table-card">
+        <table class="simple-table">
+            <thead>
+            <tr>
+                <th>Objekt</th>
+                <th>Låntagare</th>
+                <th>Datum</th>
+                <th>Åtgärder</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var reminder in Model)
+            {
+                <tr>
+                    <td>@reminder.ObjectTitle</td>
+                    <td>@reminder.BorrowerName</td>
+                    <td>@reminder.ReminderDate.ToString("yyyy-MM-dd")</td>
+                    <td class="action-cell">
+                        <a class="text-link" asp-action="Edit" asp-route-id="@reminder.Id">Ändra</a>
+                        <a class="text-link delete-link" asp-action="Delete" asp-route-id="@reminder.Id">Ta bort</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

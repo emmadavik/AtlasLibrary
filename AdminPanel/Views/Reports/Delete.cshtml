@@ -1,0 +1,26 @@
+@model LibraryAdminPanel.Models.Report
+
+@{
+    ViewData["Title"] = "Ta bort rapport";
+}
+
+<div class="form-card">
+    <h1>Ta bort rapport</h1>
+    <p>Är du säker på att du vill ta bort <strong>@Model.Title</strong>?</p>
+
+    <div class="info-list">
+        <p><strong>Sammanfattning:</strong> @Model.Summary</p>
+        <p><strong>Valda objekt:</strong> @Model.SelectedObjectIds</p>
+        <p><strong>Skapad:</strong> @Model.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</p>
+    </div>
+
+    <form asp-action="Delete" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+
+        <div class="button-row">
+            <button type="submit" class="btn-danger">Ta bort</button>
+            <a asp-action="Index" class="btn-secondary">Avbryt</a>
+        </div>
+    </form>
+</div>

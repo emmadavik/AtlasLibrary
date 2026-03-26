@@ -11,11 +11,12 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Item</th>
+                <th>ItemTitle</th>
                 <th>Antal</th>
                 <th>Lånedatum</th>
                 <th>Förfallodatum</th>
                 <th>Status</th>
+                <th>Åtgärd</th>
             </tr>
         </thead>
 
@@ -24,11 +25,14 @@
             @foreach (var loan in Model)
             {
                 <tr>
-                    @* <td>@loan.ItemId</td> *@
+
                     <td>@loan.ItemTitle</td>
                     <td>@loan.Quantity</td>
+                    <td> @loan.Status</td>
                     <td>@loan.LoanDate.ToShortDateString()</td>
                     <td>@loan.DueDate.ToShortDateString()</td>
+
+                    <!-- STATUS -->
                     <td>
                         @if (loan.Status == "Returned")
                         {
@@ -38,11 +42,38 @@
                         {
                             <span class="badge bg-warning text-dark">Pending</span>
                         }
+                        else if (loan.Status == "ReturnRequested")
+                        {
+                            <span class="badge bg-info text-dark">Return Requested</span>
+                        }
                         else
                         {
                             <span class="badge bg-secondary">@loan.Status</span>
                         }
                     </td>
+
+                    <!-- KNAPP / ÅTGÄRD -->
+                    <td>
+                        @if (loan.Status?.ToLower() == "pending")
+                        {
+                            <form asp-action="RequestReturn" asp-controller="LoansPage" method="post">
+                                <input type="hidden" name="id" value="@loan.Id" />
+                                <input type="hidden" name="userId" value="@loan.UserId" />
+                                <button type="submit" class="btn btn-sm btn-outline-dark">
+                                    Markera återlämning
+                                </button>
+                            </form>
+                        }
+                        else if (loan.Status == "ReturnRequested")
+                        {
+                            <span class="text-muted">Väntar på bekräftelse</span>
+                        }
+                        else
+                        {
+                            <span>-</span>
+                        }
+                    </td>
+
                 </tr>
             }
 

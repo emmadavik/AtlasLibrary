@@ -1,0 +1,127 @@
+﻿@model AtlasLibrary.Controllers.ProfileController.ProfilePageViewModel
+
+@{
+    ViewData["Title"] = "Profil";
+}
+
+<div class="profile-page">
+    <div class="top-navigation">
+        <a asp-controller="Home" asp-action="Index" class="profile-btn text-decoration-none">
+            ← Startsidan
+        </a>
+    </div>
+
+    <div class="profile-layout">
+        <div class="profile-panel">
+            <div class="login-content">
+                <h1>Min profil</h1>
+                <p>Här kan du se och uppdatera dina användaruppgifter.</p>
+
+                @if (ViewBag.Error != null)
+                {
+                    <div class="login-error">
+                        @ViewBag.Error
+                    </div>
+                }
+
+                @if (ViewBag.Success != null)
+                {
+                    <div class="login-success">
+                        @ViewBag.Success
+                    </div>
+                }
+
+                <form method="post" asp-controller="Profile" asp-action="Index" class="login-form">
+                    <input type="hidden" asp-for="Profile.Id" />
+
+                    <div class="form-group-custom">
+                        <label for="Profile_Namn">Användarnamn</label>
+                        <input type="text" id="Profile_Namn" name="Profile.Namn" class="login-input" value="@Model.Profile.Namn" required />
+                    </div>
+
+                    <div class="form-group-custom">
+                        <label for="Profile_Epost">E-post</label>
+                        <input type="text" id="Profile_Epost" name="Profile.Epost" class="login-input" value="@Model.Profile.Epost" required />
+                    </div>
+
+                    <div class="profile-actions">
+                        <div class="profile-action-row">
+                            <button type="submit" class="login-submit-btn">Spara ändringar</button>
+
+                            <a asp-controller="Profile" asp-action="ChangePassword" class="profile-btn text-decoration-none">
+                                Ändra lösenord
+                            </a>
+                        </div>
+
+                        @if (Model.Profile.IsAdmin)
+                        {
+                            <div class="profile-action-row">
+                                <a asp-controller="Admin" asp-action="Index" class="profile-btn text-decoration-none">
+                                    Hantera användare
+                                </a>
+                            </div>
+
+                            <div class="profile-action-row">
+                                <a href="https://atlasadminpanel-axcuc3e8hva9ghg6.swedencentral-01.azurewebsites.net"
+                                       class="profile-btn text-decoration-none">
+                                    Avancerade adminfunktioner
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="profile-panel loans-panel">
+            <div class="login-content">
+                <h1>Mina lån</h1>
+                <p>Här ser du dina lån.</p>
+
+                @if (Model.Loans != null && Model.Loans.Any())
+                {
+                    <div class="loans-table-wrapper">
+                        <table class="loans-table">
+                            <thead>
+                                <tr>
+                                    <th>Titel</th>
+                                    <th>Antal</th>
+                                    <th>Lånedatum</th>
+                                    <th>Förfallodatum</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var loan in Model.Loans)
+                                {
+                                    <tr>
+                                        <td>@loan.ItemTitle</td>
+                                        <td>@loan.Quantity</td>
+                                        <td>@loan.LoanDate.ToString("yyyy-MM-dd")</td>
+                                        <td>@loan.DueDate.ToString("yyyy-MM-dd")</td>
+                                        <td>
+                                            @if (loan.ReturnedDate.HasValue)
+                                            {
+                                                <span class="loan-status-badge returned">Returned</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="loan-status-badge pending">@loan.Status</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-loans">
+                        Du har inga lån ännu.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

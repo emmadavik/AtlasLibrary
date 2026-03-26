@@ -1,55 +1,58 @@
 ﻿@model AtlasLibrary.Models.CreateLoanViewModel
 
-@{
-    ViewData["Title"] = "Skapa lån";
-}
-
 <div class="container mt-5">
+
     <h1 class="mb-4">Bekräfta lån</h1>
 
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success">
-            @TempData["SuccessMessage"]
-        </div>
-    }
+    <div class="card p-4 shadow-sm">
 
-    <form asp-action="Create" method="post" class="w-50">
-        <input asp-for="ItemId" type="hidden" />
-        <input asp-for="UserId" type="hidden" />
-        <input asp-for="ItemTitle" type="hidden" />
-        <input asp-for="UserName" type="hidden" />
+        
+        <h4 class="mb-3">Dina valda items</h4>
 
-        <div class="mb-3">
-            <label class="form-label">Vald bok</label>
-            <input value="@Model.ItemTitle" class="form-control" readonly />
-        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Antal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.CartItems)
+                {
+                    <tr>
+                        
+                        <td>
+                            <div style="display:flex; align-items:center; gap:10px;">
+                                <img src="@item.ImageUrl" style="width:50px; height:70px; object-fit:cover;" />
+                                <span>@item.Title</span>
+                            </div>
+                        </td>
+                        <td>@item.Quantity</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
 
-        <div class="mb-3">
-            <label class="form-label">Låntagare</label>
-            <input value="@Model.UserName" class="form-control" readonly />
-        </div>
+       
+        <form asp-action="Create" method="post">
 
-        <div class="mb-3">
-            <label asp-for="Quantity" class="form-label"></label>
-            <input asp-for="Quantity" class="form-control" />
-            <span asp-validation-for="Quantity" class="text-danger"></span>
-        </div>
+            <input type="hidden" asp-for="UserId" />
 
-        <div class="mb-3">
-            <label asp-for="LoanDate" class="form-label"></label>
-            <input asp-for="LoanDate" type="date" class="form-control" />
-            <span asp-validation-for="LoanDate" class="text-danger"></span>
-        </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Återlämningsdatum</label>
+                <input asp-for="DueDate" type="date" class="form-control" />
+            </div>
 
-        <div class="mb-3">
-            <label asp-for="DueDate" class="form-label"></label>
-            <input asp-for="DueDate" type="date" class="form-control" />
-            <span asp-validation-for="DueDate" class="text-danger"></span>
-        </div>
+            
+            <button type="submit" class="btn btn-success w-100">
+                Bekräfta lån
+            </button>
 
-        <button type="submit" class="btn btn-success">Bekräfta lån</button>
-    </form>
+        </form>
+
+    </div>
+
 </div>
 
 @section Scripts {

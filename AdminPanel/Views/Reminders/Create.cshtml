@@ -1,0 +1,44 @@
+@model LibraryAdminPanel.Models.ReminderFormViewModel
+
+@{
+    ViewData["Title"] = "Skapa Påminnelse";
+}
+
+<div class="form-card">
+    <h1>Skapa ny Påminnelse</h1>
+
+    <form asp-action="Create" method="post" class="simple-form">
+        @Html.AntiForgeryToken()
+
+        <div asp-validation-summary="ModelOnly" class="validation-text"></div>
+
+        <div class="form-group">
+            <label asp-for="CompletedObjectId"></label>
+            <select asp-for="CompletedObjectId" class="form-input">
+                <option value="">Välj objekt</option>
+                @foreach (var item in Model.CompletedObjects)
+                {
+                    <option value="@item.Id">@item.Title - @item.ObjectType - @item.BorrowerName</option>
+                }
+            </select>
+            <span asp-validation-for="CompletedObjectId" class="validation-text"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Message"></label>
+            <textarea asp-for="Message" class="form-input form-textarea"></textarea>
+            <span asp-validation-for="Message" class="validation-text"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ReminderDate"></label>
+            <input asp-for="ReminderDate" class="form-input" />
+            <span asp-validation-for="ReminderDate" class="validation-text"></span>
+        </div>
+
+        <div class="button-row">
+            <button type="submit" class="btn-primary">Spara Påminnelse</button>
+            <a asp-action="Index" class="btn-secondary">Tillbaka</a>
+        </div>
+    </form>
+</div>

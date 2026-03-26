@@ -1,0 +1,57 @@
+@model LibraryAdminPanel.Models.ReportFormViewModel
+
+@{
+    ViewData["Title"] = "Skapa rapport";
+}
+
+<div class="form-card">
+    <h1>Skapa ny rapport</h1>
+    <p class="sub-text">Välj ett eller flera färdiga objekt.</p>
+
+    <form asp-action="Create" method="post" class="simple-form">
+        @Html.AntiForgeryToken()
+
+        <div asp-validation-summary="ModelOnly" class="validation-text"></div>
+
+        <div class="form-group">
+            <label asp-for="Title"></label>
+            <input asp-for="Title" class="form-input" />
+            <span asp-validation-for="Title" class="validation-text"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="SelectedObjectIds"></label>
+
+            @if (Model.CompletedObjects != null && Model.CompletedObjects.Any())
+            {
+                <div class="checkbox-list">
+                    @foreach (var item in Model.CompletedObjects)
+                    {
+                        <label class="checkbox-item">
+                            <input type="checkbox"
+                                   name="SelectedObjectIds"
+                                   value="@item.Id"
+                                   @(Model.SelectedObjectIds.Contains(item.Id) ? "checked" : null) />
+                            <span>@item.Title - @item.ObjectType - @item.BorrowerName</span>
+                        </label>
+                    }
+                </div>
+            }
+            else
+            {
+                <p>Inga färdiga objekt hittades.</p>
+            }
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Summary"></label>
+            <textarea asp-for="Summary" class="form-input form-textarea"></textarea>
+            <span asp-validation-for="Summary" class="validation-text"></span>
+        </div>
+
+        <div class="button-row">
+            <button type="submit" class="btn-primary">Spara rapport</button>
+            <a asp-action="Index" class="btn-secondary">Tillbaka</a>
+        </div>
+    </form>
+</div>

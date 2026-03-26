@@ -1,0 +1,30 @@
+@inject IConfiguration Configuration
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AdminPanel</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+<header class="site-header">
+    <div class="header-left">Atlas Library</div>
+
+    <nav class="top-nav">
+        <a asp-controller="Admin" asp-action="Index">Panel</a>
+        <a href="https://atlaslibraryitemsobject-gddwfucvfuetbmbe.swedencentral-01.azurewebsites.net">Hantera Objekt</a>
+        <a href="@(Configuration["ExternalLinks:ManageReservationsUrl"] ?? "#")">Hantera Reservation</a>
+    </nav>
+
+    <div class="header-right">
+    </div>
+</header>
+
+<main class="page-wrapper">
+    @RenderBody()
+</main>
+
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,33 +1,93 @@
-﻿@{
-    ViewData["Title"] = "Kundkorg";
-}
+﻿@model List<AtlasLibrary.Models.CartItemViewModel>
+<link rel="stylesheet" href="~/css/Cart.css" asp-append-version="true" />
 
-<div class="container mt-5">
-    <h1 class="mb-4">Kundkorg</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>ItemId</th>
-                <th>Titel</th>
-                <th>Antal</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>Testbok</td>
-                <td>1</td>
-                <td>
-                    <a asp-controller="LoansPage"
-                       asp-action="Create"
-                       asp-route-itemId="1"
-                       class="btn btn-success">
-                        Gå vidare till lån
-                    </a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+
+
+<div class="cart-overlay">
+   <div class="cart-drawer">
+       <div class="cart-header">
+           <h2>Varukorg</h2>
+           <a asp-controller="Items" asp-action="Index" class="close-btn">×</a>
+       </div>
+
+
+       <div class="cart-body">
+           @if (!Model.Any())
+           {
+               <p>Din kundvagn är tom.</p>
+           }
+           else
+           {
+               @foreach (var item in Model)
+               {
+                   <div class="cart-row">
+                       <div class="cart-row-image">
+                           @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                           {
+                               <img src="@item.ImageUrl" alt="@item.Title" />
+                           }
+                           else
+                           {
+                               <div class="cart-no-image">Ingen bild</div>
+                           }
+                       </div>
+                       
+                       <div class="cart-row-info">
+                           <h4>@item.Title</h4>
+
+                           @if (!string.IsNullOrWhiteSpace(item.Author))
+                           {
+                               <p><strong>Författare:</strong> @item.Author</p>
+                           }
+
+                           @if (!string.IsNullOrWhiteSpace(item.Description))
+                           {
+                               <p><strong>Beskrivning:</strong> @item.Description</p>
+                           }
+
+                           <p><strong>Typ:</strong> @item.Type</p>
+                           
+                       </div>
+                      
+
+
+                       <div class="cart-row-actions">
+                           <div class="qty-box">
+                               <form asp-action="DecreaseQuantity" method="post">
+                                   <input type="hidden" name="id" value="@item.Id" />
+                                   <button type="submit">−</button>
+                               </form>
+
+
+                               <span>@item.Quantity</span>
+
+
+                               <form asp-action="IncreaseQuantity" method="post">
+                                   <input type="hidden" name="id" value="@item.Id" />
+                                   <button type="submit">+</button>
+                               </form>
+                           </div>
+
+                           <form asp-action="Remove" method="post">
+                               <input type="hidden" name="id" value="@item.Id" />
+                               <button type="submit" class="remove-link">Ta bort</button>
+                           </form>
+                       </div>
+                   </div>
+               }
+           }
+       </div>
+
+
+       <div class="cart-footer">
+           <div class="cart-summary">
+               <span>Summa</span>
+               <strong>@Model.Sum(x => x.Quantity) objekt</strong>
+           </div>
+
+            <a asp-controller="LoansPage" asp-action="Create" class="checkout-btn">Fortsätt</a>
+       </div>
+   </div>
 </div>
+

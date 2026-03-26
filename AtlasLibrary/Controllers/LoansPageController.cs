@@ -7,95 +7,121 @@ namespace AtlasLibrary.Controllers
 {
     public class LoansPageController : Controller
     {
-        private readonly HttpClient _httpClient;
+        
+            private readonly HttpClient _httpClient;
 
-        public LoansPageController()
-        {
-            _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri("https://localhost:7024/");
-        }
+            private readonly string _loansApiUrl = "https://atlas-loans-api-emmaa-bfdhc2h2h5bwh2a8.swedencentral-01.azurewebsites.net/api/Loans";
+            private readonly string _itemsApiBaseUrl = "https://abdisalam-items-chauhsfzdabwdkg5.swedencentral-01.azurewebsites.net/";
+
+            public LoansPageController(IHttpClientFactory httpClientFactory)
+            {
+                _httpClient = httpClientFactory.CreateClient();
+
+            }
+
+
 
         [HttpGet]
-        public IActionResult Create(int? itemId)
+        public async Task<IActionResult> Create()
         {
+            var cart = await _httpClient.GetFromJsonAsync<List<CartItemViewModel>>($"{_itemsApiBaseUrl}api/Cart")
+                       ?? new List<CartItemViewModel>();
+
+            if (!cart.Any())
+            {
+                TempData["ErrorMessage"] = "Varukorgen är tom.";
+                return RedirectToAction("Index", "Cart");
+            }
+
             var model = new CreateLoanViewModel
             {
-                ItemId = itemId ?? 0,
-                UserId = 1, // tillfälligt testvärde tills login är kopplat
-                ItemTitle = itemId.HasValue ? $"Bok #{itemId}" : "Ingen bok vald",
+                UserId = 1,
                 UserName = "Testanvändare",
                 LoanDate = DateTime.Today,
                 DueDate = DateTime.Today.AddDays(14),
-                Quantity = 1
+                CartItems = new List<CartItemViewModel>()
             };
+
+            var allItems = await _httpClient.GetFromJsonAsync<List<ItemViewModel>>($"{_itemsApiBaseUrl}api/Items")
+                           ?? new List<ItemViewModel>();
+
+            foreach (var cartItem in cart)
+            {
+                var item = allItems.FirstOrDefault(i => i.Id == cartItem.ItemId);
+
+                cartItem.Title = item?.Title ?? $"Bok #{cartItem.ItemId}";
+                cartItem.ImageUrl = item?.ImageUrl ?? "";
+
+                model.CartItems.Add(cartItem);
+            }
 
             return View(model);
         }
+
+
 
         [HttpPost]
         public async Task<IActionResult> Create(CreateLoanViewModel model)
         {
             if (!ModelState.IsValid)
             {
+                var cartFallback = await _httpClient.GetFromJsonAsync<List<CartItemViewModel>>($"{_itemsApiBaseUrl}api/Cart")
+                                   ?? new List<CartItemViewModel>();
+
+                model.CartItems = cartFallback;
                 return View(model);
             }
 
-            var loanData = new
+            var cart = await _httpClient.GetFromJsonAsync<List<CartItemViewModel>>($"{_itemsApiBaseUrl}api/Cart")
+                       ?? new List<CartItemViewModel>();
+
+            if (!cart.Any())
             {
-                itemId = model.ItemId,
-                userId = model.UserId,
-                quantity = model.Quantity,
-                loanDate = model.LoanDate,
-                dueDate = model.DueDate,
-                returnedDate = (DateTime?)null,
-                status = "Pending"
-            };
-
-            var json = JsonSerializer.Serialize(loanData);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            var response = await _httpClient.PostAsync("api/Loans", content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                TempData["SuccessMessage"] = "Lånet skapades!";
-                return RedirectToAction("MyLoans", new { userId = model.UserId });
+                TempData["ErrorMessage"] = "Varukorgen är tom.";
+                return RedirectToAction("Index", "Cart");
             }
 
-            ModelState.AddModelError(string.Empty, "Något gick fel när lånet skulle skapas.");
+            var allItems = await _httpClient.GetFromJsonAsync<List<ItemViewModel>>($"{_itemsApiBaseUrl}api/Items")
+                           ?? new List<ItemViewModel>();
 
-            if (string.IsNullOrWhiteSpace(model.ItemTitle))
-                model.ItemTitle = $"Bok #{model.ItemId}";
+            foreach (var cartItem in cart)
+            {
+                var item = allItems.FirstOrDefault(i => i.Id == cartItem.ItemId);
+                var itemTitle = item?.Title ?? $"Bok #{cartItem.ItemId}";
 
-            if (string.IsNullOrWhiteSpace(model.UserName))
-                model.UserName = "Testanvändare";
+                var loanData = new
+                {
+                    itemId = cartItem.ItemId,
+                    itemTitle = itemTitle,
+                    userId = model.UserId,
+                    quantity = cartItem.Quantity,
+                    loanDate = DateTime.Today,
+                    dueDate = model.DueDate,
+                    returnedDate = (DateTime?)null,
+                    status = "Pending"
+                };
 
-            return View(model);
+                var json = JsonSerializer.Serialize(loanData);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.PostAsync(_loansApiUrl, content);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    ModelState.AddModelError(string.Empty, "Något gick fel när lånen skulle skapas.");
+                    model.CartItems = cart;
+                    return View(model);
+                }
+            }
+
+            foreach (var cartItem in cart)
+            {
+                await _httpClient.DeleteAsync($"{_itemsApiBaseUrl}api/Cart/{cartItem.Id}");
+            }
+
+            TempData["SuccessMessage"] = "Lånen skapades!";
+            return RedirectToAction("Index", "Profile");
         }
 
-        public async Task<IActionResult> MyLoans(int userId = 1)
-        {
-            var response = await _httpClient.GetAsync($"api/Loans/user/{userId}");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return View(new List<LoanViewModel>());
-            }
-
-            var json = await response.Content.ReadAsStringAsync();
-
-            var loans = JsonSerializer.Deserialize<List<LoanViewModel>>(json,
-            new JsonSerializerOptions
-            {
-                 PropertyNameCaseInsensitive = true
-            });
-
-            foreach (var loan in loans!)
-            {
-                loan.ItemTitle = $"Bok #{loan.ItemId}";
-            }
-
-            return View(loans ?? new List<LoanViewModel>());
-        }
     }
 }
