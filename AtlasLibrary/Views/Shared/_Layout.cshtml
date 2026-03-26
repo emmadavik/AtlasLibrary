@@ -4,7 +4,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - AtlasLibrary</title>
-    <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/AtlasLibrary.styles.css" asp-append-version="true" />
@@ -13,7 +12,8 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-light mb-4">
             <div class="container-fluid px-4">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">Logga</a>
+                
+                <a class="navbar-brand" asp-controller="AdminItems" asp-action="Index">Logga</a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
                     <span class="navbar-toggler-icon"></span>
@@ -22,7 +22,7 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between align-items-center">
                     <ul class="navbar-nav mx-auto nav-pill-wrapper">
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Items" asp-action="Index">Items</a>
+                            <a class="nav-link" asp-controller="AdminItems" asp-action="Index">Items</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Loans" asp-action="Index">Loans</a>
