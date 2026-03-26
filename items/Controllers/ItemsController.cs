@@ -15,8 +15,28 @@ public class ItemsController : ControllerBase
     {
         _factory = factory;
     }
+    
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var allItems = new List<Item>();
 
-   [HttpGet("books")]
+        var booksResult = await GetBooks(null) as OkObjectResult;
+        if (booksResult?.Value is List<Item> books)
+            allItems.AddRange(books);
+
+        var equipmentResult = await GetEquipment() as OkObjectResult;
+        if (equipmentResult?.Value is List<Item> equipment)
+            allItems.AddRange(equipment);
+
+        var reportsResult = await GetReports() as OkObjectResult;
+        if (reportsResult?.Value is List<Item> reports)
+            allItems.AddRange(reports);
+
+        return Ok(allItems);
+    }
+
+[HttpGet("books")]
 public async Task<IActionResult> GetBooks([FromQuery] string? q = null)
 {
     var list = new List<Item>();
@@ -24,55 +44,69 @@ public async Task<IActionResult> GetBooks([FromQuery] string? q = null)
     var searchTerm = string.IsNullOrWhiteSpace(q) ? "harry potter" : q;
     var url = $"https://openlibrary.org/search.json?q={Uri.EscapeDataString(searchTerm)}";
 
-    using var http = new HttpClient();
-    var response = await http.GetAsync(url);
-
-    if (response.IsSuccessStatusCode)
+    try
     {
-        var json = await response.Content.ReadAsStringAsync();
+        using var http = new HttpClient();
+        http.DefaultRequestHeaders.UserAgent.ParseAdd("AtlasLibrary/1.0");
 
-        using var doc = JsonDocument.Parse(json);
-        var docs = doc.RootElement.GetProperty("docs");
+        var response = await http.GetAsync(url);
+        Console.WriteLine($"OpenLibrary status: {response.StatusCode}");
 
-        foreach (var d in docs.EnumerateArray().Take(10))
+        if (response.IsSuccessStatusCode)
         {
-            var title = d.GetProperty("title").GetString() ?? "";
-            var author = "";
-            var imageUrl = "";
-            var itemId = 0;
+            var json = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(json.Length);
 
-            if (d.TryGetProperty("author_name", out var authorProp) && authorProp.GetArrayLength() > 0)
+            using var doc = JsonDocument.Parse(json);
+            var docs = doc.RootElement.GetProperty("docs");
+
+            foreach (var d in docs.EnumerateArray().Take(10))
             {
-                author = authorProp[0].GetString() ?? "";
+                var title = d.TryGetProperty("title", out var titleProp)
+                    ? titleProp.GetString() ?? ""
+                    : "";
+
+                var author = "";
+                var imageUrl = "";
+                var itemId = 0;
+
+                if (d.TryGetProperty("author_name", out var authorProp) && authorProp.ValueKind == JsonValueKind.Array && authorProp.GetArrayLength() > 0)
+                {
+                    author = authorProp[0].GetString() ?? "";
+                }
+
+                if (d.TryGetProperty("cover_i", out var coverProp) && coverProp.ValueKind == JsonValueKind.Number)
+                {
+                    itemId = coverProp.GetInt32();
+                    imageUrl = $"https://covers.openlibrary.org/b/id/{itemId}-M.jpg";
+                }
+
+                if (itemId == 0)
+                {
+                    itemId = Math.Abs($"{title}-{author}".GetHashCode());
+                }
+
+                list.Add(new Item
+                {
+                    Id = itemId,
+                    Title = title,
+                    Author = author,
+                    Description = "Ingen beskrivning tillgänglig",
+                    Type = "Book",
+                    IsAvailable = true,
+                    ImageUrl = imageUrl
+                });
             }
-
-            if (d.TryGetProperty("cover_i", out var coverProp))
-            {
-                itemId = coverProp.GetInt32();
-                imageUrl = $"https://covers.openlibrary.org/b/id/{itemId}-M.jpg";
-            }
-
-            if (itemId == 0)
-            {
-                itemId = Math.Abs($"{title}-{author}".GetHashCode());
-            }
-
-            list.Add(new Item
-            {
-                Id = itemId,
-                Title = title,
-                Author = author,
-                Description = "Ingen beskrivning tillgänglig",
-                Type = "Book",
-                IsAvailable = true,
-                ImageUrl = imageUrl
-            });
         }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"OpenLibrary fel: {ex.Message}");
     }
 
     try
     {
-        var client = _factory.CreateClient("adminApi");
+        var client = _factory.CreateClient("itemsApi");
 
         var adminItems = await client.GetFromJsonAsync<List<Item>>("api/items")
                          ?? new List<Item>();
@@ -96,19 +130,19 @@ public async Task<IActionResult> GetBooks([FromQuery] string? q = null)
 
         list.AddRange(mappedAdminBooks);
     }
-    catch
+    catch (Exception ex)
     {
+        Console.WriteLine($"itemsApi fel: {ex.Message}");
     }
 
     return Ok(list);
 }
-
     [HttpGet("equipment")]
     public async Task<IActionResult> GetEquipment()
     {
         try
         {
-            var client = _factory.CreateClient("adminApi");
+            var client = _factory.CreateClient("itemsApi");
 
             var adminItems = await client.GetFromJsonAsync<List<Item>>("api/items")
                              ?? new List<Item>();
@@ -132,7 +166,7 @@ public async Task<IActionResult> GetBooks([FromQuery] string? q = null)
     {
         try
         {
-            var client = _factory.CreateClient("adminApi");
+            var client = _factory.CreateClient("itemsApi");
 
             var adminItems = await client.GetFromJsonAsync<List<Item>>("api/items")
                              ?? new List<Item>();
