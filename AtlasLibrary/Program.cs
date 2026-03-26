@@ -18,6 +18,15 @@ builder.Services.AddHttpClient("LoansApi", client =>
     client.BaseAddress = new Uri(builder.Configuration["ApiSettings:LoansApiBaseUrl"]!);
 });
 
+// HttpClient för AdminApi
+builder.Services.AddHttpClient("AdminApi", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:AdminBaseUrl"]!);
+});
+
+// Session
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
 
 
 builder.Services.AddHttpClient("equipmentItemsApi", client =>
@@ -40,14 +49,20 @@ builder.Services.AddHttpClient("ItemsService", (serviceProvider, httpClient) =>
 
 builder.Services.AddScoped<ItemsService>();
 
+    // Hämta adress till ItemsService ifrån config
+    string adress = config.GetValue<string>("ApiSettings:ItemServiceAdress") ?? "";
 // Session
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 
 
-
-var app = builder.Build();
-
+builder.Services.AddHttpClient("EquipmentItemsApi", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:xxxx/"); 
+builder.Services.AddHttpClient("EquipmentItemsApi", client =>
+{
+    client.BaseAddress = new Uri("https://localhost:xxxx/");
+});
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
