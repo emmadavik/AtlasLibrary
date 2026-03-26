@@ -23,51 +23,42 @@ builder.Services.AddHttpClient("AdminApi", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ApiSettings:AdminBaseUrl"]!);
 });
-builder.Services.AddHttpClient("ItemsService", client =>
-{
-    //client.BaseAddress = new Uri(builder.Configuration["ApiSettings:ItemServiceAdress"]!);
-    client.BaseAddress = new Uri("http://localhost:5079/");
-});
 
-// Session
-builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession();
-
-
+// HttpClient för equipment/items API
 builder.Services.AddHttpClient("equipmentItemsApi", client =>
 {
     client.BaseAddress = new Uri("https://atlaslibraryitemsobject-gddwfucvfuetbmbe.swedencentral-01.azurewebsites.net/");
 });
 
-//builder.Services.AddHttpClient("ItemsService", (serviceProvider, httpClient) =>
-//{
-//    var config = serviceProvider.GetRequiredService<IConfiguration>();
-//    string? adress = config.GetValue<string>("ApiSettings:ItemServiceAdress");
+// HttpClient för ItemsService
+builder.Services.AddHttpClient("ItemsService", (serviceProvider, httpClient) =>
+{
+    var config = serviceProvider.GetRequiredService<IConfiguration>();
+    string? adress = config.GetValue<string>("ApiSettings:ItemServiceAdress");
 
-//    if (string.IsNullOrWhiteSpace(adress))
-//    {
-//        throw new InvalidOperationException("ItemServiceAdress saknas i appsettings.");
-//    }
+    if (string.IsNullOrWhiteSpace(adress))
+    {
+        throw new InvalidOperationException("ItemServiceAdress saknas i appsettings.");
+    }
 
-//    httpClient.BaseAddress = new Uri(adress);
-//});
+    httpClient.BaseAddress = new Uri(adress);
+});
 
 builder.Services.AddScoped<ItemsService>();
 
-    // Hämta adress till ItemsService ifrån config
-    string adress = config.GetValue<string>("ApiSettings:ItemServiceAdress") ?? "";
 // Session
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
 
-
-builder.Services.AddHttpClient("EquipmentItemsApi", client =>
-{
-    client.BaseAddress = new Uri("https://localhost:xxxx/"); 
+// Om ni faktiskt behöver denna också, behåll den.
+// Annars kan den tas bort om den är gammal/testkod.
 builder.Services.AddHttpClient("EquipmentItemsApi", client =>
 {
     client.BaseAddress = new Uri("https://localhost:xxxx/");
 });
+
+var app = builder.Build();
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -85,8 +76,8 @@ app.UseAuthorization();
 app.MapStaticAssets();
 
 app.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}")
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
 app.Run();
