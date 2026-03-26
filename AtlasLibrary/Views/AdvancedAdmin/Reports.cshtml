@@ -24,6 +24,16 @@
             </a>
         </div>
 
+        @if (TempData["Success"] != null)
+        {
+            <div class="warning-box">@TempData["Success"]</div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="warning-box">@TempData["Error"]</div>
+        }
+
         @if (ViewBag.Error != null)
         {
             <div class="warning-box">
@@ -42,6 +52,7 @@
                             <th>Sammanfattning</th>
                             <th>Skapad</th>
                             <th>Valda objekt</th>
+                            <th>Åtgärder</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -53,6 +64,17 @@
                                 <td>@report.Summary</td>
                                 <td>@report.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
                                 <td>@report.SelectedObjectIds</td>
+                                <td class="action-cell">
+                                    <a asp-controller="AdvancedAdmin" asp-action="EditReport" asp-route-id="@report.Id" class="text-link">
+                                        Redigera
+                                    </a>
+
+                                    <form asp-controller="AdvancedAdmin" asp-action="DeleteReport" asp-route-id="@report.Id" method="post" style="display:inline;">
+                                        <button type="submit" class="text-link delete-link" onclick="return confirm('Är du säker på att du vill ta bort rapporten?')">
+                                            Ta bort
+                                        </button>
+                                    </form>
+                                </td>
                             </tr>
                         }
                     </tbody>

@@ -1,0 +1,67 @@
+@model AtlasLibrary.Controllers.AdvancedAdminController.EditReportViewModel
+
+@{
+    ViewData["Title"] = "Redigera rapport";
+}
+
+<div class="page-wrapper">
+    <div class="top-navigation" style="margin-bottom: 22px;">
+        <a asp-controller="AdvancedAdmin" asp-action="Reports" class="top-action-btn profile-btn text-decoration-none">
+            ← Tillbaka till rapporter
+        </a>
+    </div>
+
+    <div class="form-card">
+        <h1>Redigera rapport</h1>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="warning-box">
+                @ViewBag.Error
+            </div>
+        }
+
+        <form asp-action="EditReport" method="post" class="simple-form">
+            <input asp-for="Id" type="hidden" />
+
+            <div class="form-group">
+                <label asp-for="Title">Rapportnamn</label>
+                <input asp-for="Title" class="form-input" />
+            </div>
+
+            <div class="form-group">
+                <label asp-for="SelectedObjectIds">Välj objekt</label>
+
+                @if (Model.CompletedObjects != null && Model.CompletedObjects.Any())
+                {
+                    <div class="checkbox-list">
+                        @foreach (var item in Model.CompletedObjects)
+                        {
+                            <label class="checkbox-item">
+                                <input type="checkbox"
+                                       name="SelectedObjectIds"
+                                       value="@item.Id"
+                                       @(Model.SelectedObjectIds.Contains(item.Id) ? "checked" : null) />
+                                <span>@item.Title - @item.ObjectType - @item.BorrowerName</span>
+                            </label>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p>Inga objekt hittades.</p>
+                }
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Summary">Sammanfattning</label>
+                <textarea asp-for="Summary" class="form-input form-textarea"></textarea>
+            </div>
+
+            <div class="button-row">
+                <button type="submit" class="btn-primary">Spara ändringar</button>
+                <a asp-action="Reports" class="btn-secondary text-decoration-none">Tillbaka</a>
+            </div>
+        </form>
+    </div>
+</div>

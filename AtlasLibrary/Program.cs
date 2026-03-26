@@ -24,14 +24,18 @@ builder.Services.AddHttpClient("AdminApi", client =>
     client.BaseAddress = new Uri(builder.Configuration["ApiSettings:AdminBaseUrl"]!);
 });
 
-// HttpClient för equipment/items API
+// Session
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
+
+// HttpClient för gamla/fasta items-API:t
 builder.Services.AddHttpClient("equipmentItemsApi", client =>
 {
     client.BaseAddress = new Uri("https://atlaslibraryitemsobject-gddwfucvfuetbmbe.swedencentral-01.azurewebsites.net/");
 });
 
-// HttpClient för ItemsService
-builder.Services.AddHttpClient("ItemsService", (serviceProvider, httpClient) =>
+// Typed client för ItemsService via appsettings
+builder.Services.AddHttpClient<ItemsService>((serviceProvider, httpClient) =>
 {
     var config = serviceProvider.GetRequiredService<IConfiguration>();
     string? adress = config.GetValue<string>("ApiSettings:ItemServiceAdress");
@@ -44,7 +48,7 @@ builder.Services.AddHttpClient("ItemsService", (serviceProvider, httpClient) =>
     httpClient.BaseAddress = new Uri(adress);
 });
 
-builder.Services.AddScoped<ItemsService>();
+var app = builder.Build();
 
 // Session
 builder.Services.AddDistributedMemoryCache();
