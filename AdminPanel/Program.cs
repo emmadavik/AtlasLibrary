@@ -17,7 +17,6 @@ builder.Services.AddHttpClient("UsersApi", client =>
     client.BaseAddress = new Uri(builder.Configuration["ApiSettings:UsersApiBaseUrl"]!);
 });
 
-// Lägg till session
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -31,6 +30,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    dbContext.Database.EnsureDeleted();
     dbContext.Database.EnsureCreated();
 }
 
@@ -45,9 +45,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// Lägg till session före authorization
 app.UseSession();
-
 app.UseAuthorization();
 
 app.MapControllerRoute(
