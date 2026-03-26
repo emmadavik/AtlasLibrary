@@ -1,0 +1,71 @@
+﻿@model List<AtlasLibrary.Controllers.AdvancedAdminController.ReminderDto>
+
+@{
+    ViewData["Title"] = "Påminnelser";
+}
+
+<div class="page-wrapper">
+    <div class="top-navigation" style="margin-bottom: 22px;">
+        <a asp-controller="AdvancedAdmin" asp-action="Index" class="top-action-btn profile-btn text-decoration-none">
+            ← Tillbaka till adminpanelen
+        </a>
+    </div>
+
+    <div class="table-card">
+        <div class="page-header-row">
+            <div>
+                <p class="eyebrow">Påminnelser</p>
+                <h1>Alla påminnelser</h1>
+                <p class="sub-text">Här visas alla skapade påminnelser i systemet.</p>
+            </div>
+
+            <a asp-controller="AdvancedAdmin" asp-action="CreateReminder" class="btn-primary text-decoration-none">
+                Skapa ny påminnelse
+            </a>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="warning-box">
+                @ViewBag.Error
+            </div>
+        }
+
+        @if (Model != null && Model.Any())
+        {
+            <div class="table-responsive">
+                <table class="simple-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Objekt</th>
+                            <th>Låntagare</th>
+                            <th>E-post</th>
+                            <th>Meddelande</th>
+                            <th>Datum</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var reminder in Model)
+                        {
+                            <tr>
+                                <td>@reminder.Id</td>
+                                <td>@reminder.ObjectTitle</td>
+                                <td>@reminder.BorrowerName</td>
+                                <td>@reminder.BorrowerEmail</td>
+                                <td>@reminder.Message</td>
+                                <td>@reminder.ReminderDate.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-card">
+                <p>Det finns inga påminnelser ännu.</p>
+            </div>
+        }
+    </div>
+</div>

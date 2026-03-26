@@ -1,0 +1,54 @@
+﻿@model AtlasLibrary.Controllers.AdvancedAdminController.CreateReminderViewModel
+
+@{
+    ViewData["Title"] = "Skapa påminnelse";
+}
+
+<div class="page-wrapper">
+    <div class="top-navigation" style="margin-bottom: 22px;">
+        <a asp-controller="AdvancedAdmin" asp-action="Index" class="top-action-btn profile-btn text-decoration-none">
+            ← Tillbaka till adminpanelen
+        </a>
+    </div>
+
+    <div class="form-card">
+        <h1>Skapa ny påminnelse</h1>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="warning-box">
+                @ViewBag.Error
+            </div>
+        }
+
+        <form asp-action="CreateReminder" method="post" class="simple-form">
+            <div class="form-group">
+                <label asp-for="CompletedObjectId">Valt objekt</label>
+                <select asp-for="CompletedObjectId" class="form-input">
+                    <option value="">Välj objekt</option>
+                    @foreach (var item in Model.CompletedObjects)
+                    {
+                        <option value="@item.Id">
+                            @item.Title - @item.ObjectType - @item.BorrowerName
+                        </option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Message">Påminnelse</label>
+                <textarea asp-for="Message" class="form-input form-textarea"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ReminderDate">Skickas datum</label>
+                <input asp-for="ReminderDate" class="form-input" type="date" />
+            </div>
+
+            <div class="button-row">
+                <button type="submit" class="btn-primary">Spara påminnelse</button>
+                <a asp-controller="AdvancedAdmin" asp-action="Index" class="btn-secondary text-decoration-none">Tillbaka</a>
+            </div>
+        </form>
+    </div>
+</div>
