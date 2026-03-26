@@ -7,34 +7,24 @@ namespace AtlasLibrary.Controllers
 {
     public class LoansPageController : Controller
     {
-        //private readonly HttpClient _httpClient;
-        //private readonly HttpClient _loansClient;
-        //private readonly HttpClient _itemsClient;
-        private readonly HttpClient _loansClient;
-        private readonly HttpClient _ItemsClient;
-        private readonly HttpClient _equipmentItemsClient;
+        
+            private readonly HttpClient _httpClient;
 
-        public LoansPageController(IHttpClientFactory factory)
-        {
-            //_loansClient = new HttpClient();
-            //_loansClient.BaseAddress = new Uri("https://localhost:7024/");
+            private readonly string _loansApiUrl = "https://atlas-loans-api-emmaa-bfdhc2h2h5bwh2a8.swedencentral-01.azurewebsites.net/api/Loans";
+            private readonly string _itemsApiBaseUrl = "https://abdisalam-items-chauhsfzdabwdkg5.swedencentral-01.azurewebsites.net/";
 
-            //_itemsClient = factory.CreateClient("itemsApi");
+            public LoansPageController(IHttpClientFactory httpClientFactory)
+            {
+                _httpClient = httpClientFactory.CreateClient();
 
-            _loansClient = new HttpClient();
-            _loansClient.BaseAddress = new Uri("https://localhost:7024/");
+            }
 
-            _ItemsClient = factory.CreateClient("itemsApi");
-            _equipmentItemsClient = factory.CreateClient("equipmentItemsApi");
 
-        }
 
-        [HttpGet]
-        [HttpGet]
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var cart = await _ItemsClient.GetFromJsonAsync<List<CartItemViewModel>>("api/Cart")
+            var cart = await _httpClient.GetFromJsonAsync<List<CartItemViewModel>>($"{_itemsApiBaseUrl}api/Cart")
                        ?? new List<CartItemViewModel>();
 
             if (!cart.Any())
@@ -52,22 +42,15 @@ namespace AtlasLibrary.Controllers
                 CartItems = new List<CartItemViewModel>()
             };
 
+            var allItems = await _httpClient.GetFromJsonAsync<List<ItemViewModel>>($"{_itemsApiBaseUrl}api/Items")
+                           ?? new List<ItemViewModel>();
+
             foreach (var cartItem in cart)
             {
-                
-                var itemResponse = await _ItemsClient.GetAsync($"api/Items/{cartItem.ItemId}");
+                var item = allItems.FirstOrDefault(i => i.Id == cartItem.ItemId);
 
-                if (itemResponse.IsSuccessStatusCode)
-                {
-                    var json = await itemResponse.Content.ReadAsStringAsync();
-
-                    var item = JsonSerializer.Deserialize<ItemViewModel>(json,
-                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                   
-                    cartItem.Title = item?.Title ?? $"Bok #{cartItem.ItemId}";
-                    cartItem.ImageUrl = item?.ImageUrl ?? "";
-                }
+                cartItem.Title = item?.Title ?? $"Bok #{cartItem.ItemId}";
+                cartItem.ImageUrl = item?.ImageUrl ?? "";
 
                 model.CartItems.Add(cartItem);
             }
@@ -82,14 +65,14 @@ namespace AtlasLibrary.Controllers
         {
             if (!ModelState.IsValid)
             {
-                var cartFallback = await _ItemsClient.GetFromJsonAsync<List<CartItemViewModel>>("api/Cart")
+                var cartFallback = await _httpClient.GetFromJsonAsync<List<CartItemViewModel>>($"{_itemsApiBaseUrl}api/Cart")
                                    ?? new List<CartItemViewModel>();
 
                 model.CartItems = cartFallback;
                 return View(model);
             }
 
-            var cart = await _ItemsClient.GetFromJsonAsync<List<CartItemViewModel>>("api/Cart")
+            var cart = await _httpClient.GetFromJsonAsync<List<CartItemViewModel>>($"{_itemsApiBaseUrl}api/Cart")
                        ?? new List<CartItemViewModel>();
 
             if (!cart.Any())
@@ -98,12 +81,18 @@ namespace AtlasLibrary.Controllers
                 return RedirectToAction("Index", "Cart");
             }
 
+            var allItems = await _httpClient.GetFromJsonAsync<List<ItemViewModel>>($"{_itemsApiBaseUrl}api/Items")
+                           ?? new List<ItemViewModel>();
+
             foreach (var cartItem in cart)
             {
+                var item = allItems.FirstOrDefault(i => i.Id == cartItem.ItemId);
+                var itemTitle = item?.Title ?? $"Bok #{cartItem.ItemId}";
+
                 var loanData = new
                 {
                     itemId = cartItem.ItemId,
-                    itemTitle = cartItem.Title,
+                    itemTitle = itemTitle,
                     userId = model.UserId,
                     quantity = cartItem.Quantity,
                     loanDate = DateTime.Today,
@@ -115,7 +104,7 @@ namespace AtlasLibrary.Controllers
                 var json = JsonSerializer.Serialize(loanData);
                 var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                var response = await _loansClient.PostAsync("api/Loans", content);
+                var response = await _httpClient.PostAsync(_loansApiUrl, content);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -127,26 +116,10 @@ namespace AtlasLibrary.Controllers
 
             foreach (var cartItem in cart)
             {
-                await _ItemsClient.DeleteAsync($"api/Cart/{cartItem.Id}");
+                await _httpClient.DeleteAsync($"{_itemsApiBaseUrl}api/Cart/{cartItem.Id}");
             }
 
             TempData["SuccessMessage"] = "Lånen skapades!";
-            return RedirectToAction("Index", "Profile");
-        }
-        [HttpPost]
-        public async Task<IActionResult> RequestReturn(int id, int userId = 1)
-        {
-            var response = await _loansClient.PutAsync($"api/Loans/{id}/request-return", null);
-
-            if (response.IsSuccessStatusCode)
-            {
-                TempData["SuccessMessage"] = "Återlämning markerad och väntar på bekräftelse.";
-            }
-            else
-            {
-                TempData["ErrorMessage"] = "Det gick inte att markera återlämning.";
-            }
-
             return RedirectToAction("Index", "Profile");
         }
 

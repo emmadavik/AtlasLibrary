@@ -8,32 +8,35 @@ namespace AtlasLibrary.Controllers
     {
         private readonly HttpClient _httpClient;
 
-        public ReturnController()
+        public ReturnController(IHttpClientFactory httpClientFactory)
         {
-            _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri("https://localhost:7024/");
+            _httpClient = httpClientFactory.CreateClient("LoansApi");
         }
 
         public async Task<IActionResult> Index()
         {
             var token = HttpContext.Session.GetString("JwtToken");
-            var userIdString = HttpContext.Session.GetString("UserId");
+            var role = HttpContext.Session.GetString("UserRole");
 
+            // Måste vara inloggad
             if (string.IsNullOrEmpty(token))
             {
+                TempData["ErrorMessage"] = "Du måste logga in för att komma åt sidan.";
                 return RedirectToAction("Login", "Account");
             }
 
-            if (!int.TryParse(userIdString, out int loggedInUserId))
+            // Måste vara admin
+            if (string.IsNullOrEmpty(role) || role != "Admin")
             {
-                TempData["ErrorMessage"] = "Det gick inte att identifiera den inloggade användaren.";
-                return RedirectToAction("Login", "Account");
+                TempData["ErrorMessage"] = "Du har inte behörighet att komma åt sidan.";
+                return RedirectToAction("Index", "Home");
             }
 
             var response = await _httpClient.GetAsync("api/Loans");
 
             if (!response.IsSuccessStatusCode)
             {
+                TempData["ErrorMessage"] = "Det gick inte att hämta lån.";
                 return View(new List<ReturnViewModel>());
             }
 
@@ -45,36 +48,28 @@ namespace AtlasLibrary.Controllers
                     PropertyNameCaseInsensitive = true
                 }) ?? new List<ReturnViewModel>();
 
-            var userLoans = loans
-                .Where(loan => loan.UserId == loggedInUserId)
-                .ToList();
-
-            return View(userLoans);
+            // Admin ser ALLA lån
+            return View(loans);
         }
 
         [HttpPost]
         public async Task<IActionResult> ConfirmReturn(int id)
         {
             var token = HttpContext.Session.GetString("JwtToken");
-            var userIdString = HttpContext.Session.GetString("UserId");
+            var role = HttpContext.Session.GetString("UserRole");
 
+            // Måste vara inloggad
             if (string.IsNullOrEmpty(token))
             {
+                TempData["ErrorMessage"] = "Du måste logga in för att utföra åtgärden.";
                 return RedirectToAction("Login", "Account");
             }
 
-            if (!int.TryParse(userIdString, out int loggedInUserId))
-            {
-                TempData["ErrorMessage"] = "Det gick inte att identifiera den inloggade användaren.";
-                return RedirectToAction("Login", "Account");
-            }
-
-            var loanBelongsToUser = await LoanBelongsToLoggedInUser(id, loggedInUserId);
-
-            if (!loanBelongsToUser)
+            // Måste vara admin
+            if (string.IsNullOrEmpty(role) || role != "Admin")
             {
                 TempData["ErrorMessage"] = "Du har inte behörighet att hantera detta lån.";
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Home");
             }
 
             var response = await _httpClient.PutAsync($"api/Loans/{id}/confirm-return", null);
@@ -95,25 +90,20 @@ namespace AtlasLibrary.Controllers
         public async Task<IActionResult> DeleteLoan(int id)
         {
             var token = HttpContext.Session.GetString("JwtToken");
-            var userIdString = HttpContext.Session.GetString("UserId");
+            var role = HttpContext.Session.GetString("UserRole");
 
+            // Måste vara inloggad
             if (string.IsNullOrEmpty(token))
             {
+                TempData["ErrorMessage"] = "Du måste logga in för att utföra åtgärden.";
                 return RedirectToAction("Login", "Account");
             }
 
-            if (!int.TryParse(userIdString, out int loggedInUserId))
-            {
-                TempData["ErrorMessage"] = "Det gick inte att identifiera den inloggade användaren.";
-                return RedirectToAction("Login", "Account");
-            }
-
-            var loanBelongsToUser = await LoanBelongsToLoggedInUser(id, loggedInUserId);
-
-            if (!loanBelongsToUser)
+            // Måste vara admin
+            if (string.IsNullOrEmpty(role) || role != "Admin")
             {
                 TempData["ErrorMessage"] = "Du har inte behörighet att hantera detta lån.";
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Home");
             }
 
             var response = await _httpClient.DeleteAsync($"api/Loans/{id}");
@@ -128,33 +118,6 @@ namespace AtlasLibrary.Controllers
             }
 
             return RedirectToAction("Index");
-        }
-
-        private async Task<bool> LoanBelongsToLoggedInUser(int loanId, int loggedInUserId)
-        {
-            var response = await _httpClient.GetAsync("api/Loans");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return false;
-            }
-
-            var json = await response.Content.ReadAsStringAsync();
-
-            var loans = JsonSerializer.Deserialize<List<ReturnViewModel>>(json,
-                new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                }) ?? new List<ReturnViewModel>();
-
-            var loan = loans.FirstOrDefault(l => l.Id == loanId);
-
-            if (loan == null)
-            {
-                return false;
-            }
-
-            return loan.UserId == loggedInUserId;
         }
     }
 }
