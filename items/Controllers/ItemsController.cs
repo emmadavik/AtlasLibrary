@@ -21,6 +21,7 @@ public class ItemsController : ControllerBase
     {
         var allItems = new List<Item>();
 
+        
         var booksResult = await GetBooks(null) as OkObjectResult;
         if (booksResult?.Value is List<Item> books)
             allItems.AddRange(books);
