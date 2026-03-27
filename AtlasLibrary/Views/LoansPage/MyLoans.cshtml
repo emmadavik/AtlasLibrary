@@ -36,11 +36,11 @@
                     <td>
                         @if (loan.Status == "Returned")
                         {
-                            <span class="badge bg-success">Returned</span>
+                            <span class="badge bg-success">Återlämnad</span>
                         }
                         else if (loan.Status == "Pending")
                         {
-                            <span class="badge bg-warning text-dark">Pending</span>
+                            <span class="badge bg-warning text-dark">Utlånad</span>
                         }
                         else if (loan.Status == "ReturnRequested")
                         {
