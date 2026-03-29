@@ -15,7 +15,7 @@ builder.Services.AddDbContext<LoansDbContext>(options =>
 // HttpClient för UsersApi
 builder.Services.AddHttpClient("UsersApi", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7156/");
+    client.BaseAddress = new Uri(" https://userservice-emil.azurewebsites.net/");
 });
 
 var app = builder.Build();

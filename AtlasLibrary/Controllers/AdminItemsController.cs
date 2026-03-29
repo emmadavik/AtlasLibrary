@@ -7,19 +7,33 @@ namespace AtlasLibrary.Controllers;
 public class AdminItemsController : Controller
 {
     private readonly HttpClient _httpClient;
-    private readonly string _apiUrl = "https://atlaslibraryitemsobject-gddwfucvfuetbmbe.swedencentral-01.azurewebsites.net/api/items";
+    private readonly string _apiUrl = "http://localhost:5070/api/items";
 
     public AdminItemsController(IHttpClientFactory httpClientFactory)
     {
-        _httpClient = httpClientFactory.CreateClient();
+        _httpClient = httpClientFactory.CreateClient("EquipmentItemsApi");
     }
 
     public async Task<IActionResult> Index()
     {
         var response = await _httpClient.GetAsync(_apiUrl);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+            return Content($"API-fel: {response.StatusCode}\n{errorContent}");
+        }
+
         var json = await response.Content.ReadAsStringAsync();
-        var items = JsonSerializer.Deserialize<List<Item>>(json, 
+
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            return Content("API:n returnerade tomt svar.");
+        }
+
+        var items = JsonSerializer.Deserialize<List<Item>>(json,
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
         return View(items);
     }
 
@@ -27,7 +41,7 @@ public class AdminItemsController : Controller
     {
         return View();
     }
-    
+
     [HttpPost]
     public async Task<IActionResult> Create(Item item)
     {
@@ -40,9 +54,23 @@ public class AdminItemsController : Controller
     public async Task<IActionResult> Edit(int id)
     {
         var response = await _httpClient.GetAsync($"{_apiUrl}/{id}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+            return Content($"API-fel: {response.StatusCode}\n{errorContent}");
+        }
+
         var json = await response.Content.ReadAsStringAsync();
-        var item = JsonSerializer.Deserialize<Item>(json, 
+
+        if (string.IsNullOrWhiteSpace(json))
+        {
+            return Content("API:n returnerade tomt svar.");
+        }
+
+        var item = JsonSerializer.Deserialize<Item>(json,
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
         return View(item);
     }
 
