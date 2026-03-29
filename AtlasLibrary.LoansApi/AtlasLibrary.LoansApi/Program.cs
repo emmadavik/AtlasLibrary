@@ -3,6 +3,16 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -12,6 +22,8 @@ Console.WriteLine("Connection string: " + builder.Configuration.GetConnectionStr
 builder.Services.AddDbContext<LoansDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
+
 // HttpClient för UsersApi
 builder.Services.AddHttpClient("UsersApi", client =>
 {
@@ -19,6 +31,8 @@ builder.Services.AddHttpClient("UsersApi", client =>
 });
 
 var app = builder.Build();
+
+app.UseCors("AllowReactApp");
 
 app.UseSwagger();
 app.UseSwaggerUI();
